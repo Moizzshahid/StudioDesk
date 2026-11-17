@@ -1,5 +1,3 @@
-<div align="center">
-
 # StudioDesk
 
 ### The context-aware workspace for independent creative studios.
@@ -7,66 +5,54 @@
 **Plan the work. Care for the relationships. Keep the thinking behind every decision.**
 
 [![CI](https://github.com/Moizzshahid/studioDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/Moizzshahid/studioDesk/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Backend-Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
-
-</div>
 
 ---
 
 ## Why StudioDesk?
 
-Creative work often loses momentum when its context gets scattered across chats, documents, and people's memories. A client's preference is forgotten. A design decision gets repeated. A useful lesson disappears after hand-off.
+Creative work loses momentum when its context is scattered across chats, documents, and people's memories. A client's preference is forgotten. A design decision gets repeated. A useful lesson disappears after hand-off.
 
 StudioDesk brings day-to-day studio operations together with a searchable, human-curated knowledge layer called **Studio Memory**.
 
-## Product capabilities
+## Features
 
-| Area | Included in this foundation |
+| Area | Current implementation |
 | --- | --- |
-| Workspace access | Email/password sign-up and sign-in with Supabase Auth |
-| Workspace isolation | Workspace membership model and PostgreSQL Row Level Security policies |
-| Overview | Snapshot of projects, open tasks, clients, and saved memories |
-| Projects | Create, search, and track project status and due dates |
-| Tasks | Create and organise work by status, priority, and due date |
-| Clients | Keep client contact details and internal notes together |
-| Studio Memory | Save, search, filter, and remove preferences, guidelines, decisions, feedback, lessons, and meeting notes |
-| Interface | Responsive application shell and focused dashboard experience |
+| Authentication | Email/password sign-up and sign-in with Supabase Auth |
+| Workspace | Signup-time personal workspace provisioning |
+| Overview | Projects, open tasks, clients, and saved memory counts |
+| Projects | Create, search, filter by status, set due dates, update status |
+| Tasks | Create, search, filter, assign project, set priority/due date, complete/reopen/delete |
+| Clients | Save contact details and internal notes |
+| Studio Memory | Save, search, filter, and delete human-authored context |
+| Data access | Workspace-scoped PostgreSQL Row Level Security policies |
+| Interface | Responsive dashboard, navigation, forms, and empty states |
 
-> **Product honesty:** this repository is an early, self-hostable product foundation. It is not a hosted SaaS, and it does not yet include client invitations, client-facing approvals, file delivery, billing, notifications, or AI-generated memory. See the [roadmap](docs/ROADMAP.md).
+### Studio Memory
 
-## The differentiator: Studio Memory
-
-Studio Memory treats project context as a reusable studio asset. People can explicitly capture:
-
-- Client preferences and communication expectations
-- Brand guidelines and creative constraints
-- Decisions and the reasoning behind them
-- Feedback and revision patterns
-- Lessons learned and meeting notes
-
-Memories in this release are **written by people**. StudioDesk does not claim to have an AI memory engine, silently infer facts, or automatically store conversations. Future AI-assisted features must be permission-aware and require human confirmation before saving suggested knowledge.
+Capture client preferences, brand guidelines, creative decisions, feedback, meeting notes, and lessons learned. In this release, memories are explicitly written by people. There is no AI-generated or automatically captured memory engine yet. Future AI suggestions should require human review and respect workspace permissions.
 
 ## Technology
 
-- **Application:** Next.js 15 App Router, React 19
-- **Language:** TypeScript (strict mode)
-- **Backend:** Supabase Auth and PostgreSQL
-- **Data security:** PostgreSQL Row Level Security (RLS)
-- **Icons:** Lucide React
-- **Deployment target:** platforms that support Next.js, with a Supabase project
+- Next.js 15 App Router and React 19
+- TypeScript (strict mode)
+- Supabase Auth and PostgreSQL
+- PostgreSQL Row Level Security
+- Lucide React icons
 
 ## Quick start
 
 ### Requirements
 
-- Node.js 20.9 or newer
+- Node.js 20.9+
 - npm
 - A Supabase project
 
-### 1. Get the code
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/Moizzshahid/studioDesk.git
@@ -74,126 +60,117 @@ cd studioDesk
 npm install
 ```
 
-### 2. Configure Supabase
+### 2. Configure environment
 
-1. Create a project in the [Supabase Dashboard](https://supabase.com/dashboard).
-2. Open **Project Settings → API** (or the project's API keys page).
-3. Copy the project URL and the publishable/anon key.
-4. Create a local environment file:
+Create `.env.local` from the example:
 
-   ```bash
-   cp .env.example .env.local
-   ```
-
-5. Add your values to `.env.local`:
-
-   ```dotenv
-   NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
-   ```
-
-The browser-facing key is intended for client applications; database access must remain protected by RLS. **Never put a Supabase service-role key in a `NEXT_PUBLIC_*` variable or commit secrets.**
-
-### 3. Apply the database schema
-
-Open **SQL Editor** in your Supabase project and run:
-
-```text
-supabase/migrations/0001_initial_schema.sql
+```bash
+cp .env.example .env.local
 ```
 
-The initial migration creates the workspace, membership, client, project, task, memory, and activity tables; indexes; signup provisioning trigger; and RLS policies.
+Set the Supabase project URL and publishable/anon key:
 
-### 4. Run locally
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY
+```
+
+Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` variable. Never commit `.env.local`.
+
+### 3. Create the database
+
+In your Supabase project's SQL Editor, run:
+
+`supabase/migrations/0001_initial_schema.sql`
+
+This migration creates workspaces, membership, clients, projects, tasks, memories, activity events, indexes, a signup trigger, and workspace-scoped RLS policies. Apply it to a fresh project; do not blindly rerun it over a database with existing application data.
+
+### 4. Start the application
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000), create an account, and start a workspace. Depending on your Supabase Auth settings, email confirmation may be required before signing in.
+Open http://localhost:3000 and create an account. Depending on your Supabase Auth settings, email confirmation may be required before signing in.
 
-### 5. Validate before deployment
+### 5. Validate a production build
 
 ```bash
 npm run typecheck
 npm run build
+npm run start
 ```
 
-Configure the same two public Supabase environment variables in your hosting provider. Add the deployed URL to Supabase Auth's allowed redirect/site URL configuration before inviting real users.
+Set the same two public environment variables in your deployment provider and configure the production URL in Supabase Auth's allowed redirect/site URL settings.
 
-## Repository map
+## Repository structure
 
 ```text
 studioDesk/
-├── .github/                 # CI, Dependabot, issue and PR templates
+├── .github/                  # CI, Dependabot, issue and PR templates
 ├── app/
 │   ├── (app)/
-│   │   ├── clients/         # Client directory
-│   │   ├── dashboard/       # Workspace overview
-│   │   ├── memory/          # Studio Memory knowledge base
-│   │   ├── projects/        # Project management
-│   │   ├── tasks/           # Task management
-│   │   └── layout.tsx       # Authenticated application shell
-│   ├── login/               # Sign-in and sign-up
-│   ├── globals.css
+│   │   ├── clients/           # Client directory
+│   │   ├── dashboard/         # Workspace overview
+│   │   ├── memory/            # Studio Memory
+│   │   ├── projects/          # Project management
+│   │   ├── tasks/             # Task management
+│   │   └── layout.tsx         # Authenticated shell
+│   ├── login/                 # Sign-in and sign-up
+│   ├── globals.css            # Responsive design system
 │   ├── layout.tsx
 │   └── page.tsx
-├── components/              # Shared application shell and navigation
-├── docs/                    # Product, architecture, and operations docs
-├── lib/                     # Supabase client and workspace helpers
-├── supabase/migrations/     # Versioned PostgreSQL schema
+├── components/                # Header, sidebar, app shell
+├── docs/                      # Vision, architecture, roadmap
+├── lib/                       # Supabase and workspace helpers
+├── supabase/migrations/       # Versioned database schema
 ├── .env.example
 ├── CONTRIBUTING.md
 ├── LICENSE
 └── README.md
 ```
 
-See [architecture notes](docs/ARCHITECTURE.md), [product vision](docs/PRODUCT_VISION.md), and [roadmap](docs/ROADMAP.md) for more context.
+## Security notes
 
-## Security and privacy
+This is an early-stage self-hosted foundation, not an independently audited production SaaS. Before using real client data:
 
-StudioDesk is designed around workspace-scoped data access, but a schema and RLS policies are not a substitute for a security review. Before using real client or business data:
+- Test workspace isolation with at least two independent accounts.
+- Review every RLS policy and relational constraint.
+- Keep service-role credentials server-side and out of browser bundles.
+- Configure production auth URLs, backups, monitoring, and incident procedures.
+- Add server-side validation and automated authorization tests before inviting a team.
+- Do not store passwords, payment details, or highly sensitive personal data in Studio Memory.
 
-- Review every RLS policy and test access with at least two separate accounts/workspaces.
-- Keep the Supabase service-role key server-side only; it is not needed by this client foundation.
-- Configure production authentication URLs and email settings.
-- Add server-side validation, abuse controls, audit logging, backup/restore procedures, and a privacy policy appropriate to your deployment.
-- Do not store passwords, payment-card data, or highly sensitive personal information in Studio Memory.
-
-Please report suspected vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+Report suspected vulnerabilities privately using the contact guidance in [SECURITY.md](SECURITY.md).
 
 ## Development commands
 
-| Command | Purpose |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | Start the local development server |
-| `npm run typecheck` | Run the TypeScript compiler without emitting files |
-| `npm run build` | Create a production Next.js build |
-| `npm run start` | Serve the production build locally |
-
-## Contributing
-
-Contributions, thoughtful bug reports, and product feedback are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Keep changes focused, document schema changes with new migrations, and never commit credentials or real customer data.
+| `npm run dev` | Start local development |
+| `npm run typecheck` | Run TypeScript validation |
+| `npm run build` | Create production build |
+| `npm run start` | Serve production build |
 
 ## Roadmap
 
-1. **Core workspace** — authentication, projects, tasks, clients, Studio Memory. *(Initial foundation in this repository.)*
-2. **Client collaboration** — invitations, scoped client portal, deliverables, approvals, revision history.
-3. **Studio intelligence** — cross-project search, handover briefs, AI-assisted summaries and user-approved memory suggestions.
-4. **Operations** — activity feed, notifications, roles, calendar, reporting, exports, automated tests, and production observability.
+1. Core workspace — authentication, projects, tasks, clients, and manual Studio Memory.
+2. Client collaboration — invitations, client portal, deliverables, approvals, revision history.
+3. Studio intelligence — cross-project search, handover briefs, AI-assisted summaries and human-approved memory suggestions.
+4. Operations — activity feed, notifications, roles, calendar, reporting, exports, automated tests, and production observability.
 
-Roadmap items are plans, not claims of shipped functionality. Follow [ROADMAP.md](docs/ROADMAP.md) for the current breakdown.
+Roadmap items are plans, not claims of shipped functionality. See [docs/ROADMAP.md](docs/ROADMAP.md).
+
+## Contributing
+
+Bug reports, product feedback, and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first. Keep changes focused, add new migrations for schema changes, and never commit secrets or real client data.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+MIT — see [LICENSE](LICENSE).
 
 ---
-
-<div align="center">
 
 **StudioDesk** · An independent product by [Moiz](https://github.com/Moizzshahid)
 
 *Make great work. Keep everything that makes it great.*
-
-</div>
