@@ -23,7 +23,7 @@ Browser
 ## Studio Memory model
 A memory has a title, body, category, optional project/client references, creator, and timestamps. Categories include `client_preference`, `brand_guideline`, `decision`, `feedback`, `lesson`, `meeting_note`, and `other`.
 
-The current UI filters loaded memory records in the browser. The schema also defines a PostgreSQL full-text search index as a foundation; a dedicated server-side search endpoint is future work.
+The Studio Memory route (`app/(app)/memory/page.tsx`) provides workspace-scoped list, create, edit, and delete flows, browser-side title/content search, category filtering, and optional project/client associations. The current search filters records loaded by the client; the PostgreSQL full-text index is a foundation for future server-side search. The UI is implemented in the repository, but live Supabase behavior and tenant isolation have not been end-to-end tested.
 
 ## Security boundaries and current limitations
 This is an early-stage client-heavy foundation, not a completed security-certified multi-tenant service. RLS is essential and must remain enabled. Before production, validate tenant isolation with separate accounts, strengthen server-side input validation, review cross-tenant foreign-key relationships, add automated authorization tests, and establish operational controls. Do not add privileged service-role credentials to browser code.
