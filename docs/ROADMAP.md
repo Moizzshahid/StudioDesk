@@ -10,7 +10,7 @@ This roadmap separates the current foundation from ideas that have not shipped. 
 - Project creation, search, and status tracking
 - Task creation and status/priority tracking
 - Client directory and notes
-- Human-authored Studio Memory with categories, search, and filtering
+- Human-authored Studio Memory UI: list, create, edit, delete, category filter, title/content search, optional project/client links (code present; live Supabase behavior not yet verified)
 
 ## Milestone 1 — reliability and security
 - Automated component and integration tests
