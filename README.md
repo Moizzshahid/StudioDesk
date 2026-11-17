@@ -28,7 +28,7 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Projects | Create, search, filter by status, set due dates, update status |
 | Tasks | Create, search, filter, assign project, set priority/due date, complete/reopen/delete |
 | Clients | Save contact details and internal notes |
-| Studio Memory | Save, search, filter, and delete human-authored context |
+| Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
 | Interface | Responsive dashboard, navigation, forms, and empty states |
 
@@ -112,7 +112,7 @@ studioDesk/
 │   ├── (app)/
 │   │   ├── clients/           # Client directory
 │   │   ├── dashboard/         # Workspace overview
-│   │   ├── memory/            # Studio Memory
+│   │   ├── memory/            # Human-curated Studio Memory (CRUD, search, filters)
 │   │   ├── projects/          # Project management
 │   │   ├── tasks/             # Task management
 │   │   └── layout.tsx         # Authenticated shell
