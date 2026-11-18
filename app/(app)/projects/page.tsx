@@ -23,11 +23,15 @@ export default function Projects(){
    const {data:files,error:fileError}=await supabase.from("project_attachments").select("storage_path").eq("project_id",project.id).eq("workspace_id",workspace);
    if(fileError)throw fileError;
    const paths=(files||[]).map(file=>file.storage_path);
-   if(paths.length){const {error:storageError}=await supabase.storage.from("studiodesk-files").remove(paths);if(storageError)throw storageError}
-   const {error:deleteError}=await supabase.from("projects").delete().eq("id",project.id).eq("workspace_id",workspace);
+   const {data:deleted,error:deleteError}=await supabase.from("projects").delete().eq("id",project.id).eq("workspace_id",workspace).select("id").maybeSingle();
    if(deleteError)throw deleteError;
+   if(!deleted)throw new Error("Project was not deleted. Refresh the page and check your workspace access.");
    setRows(current=>current.filter(row=>row.id!==project.id));
-   void recordActivity("project_deleted","project",project.id,"Deleted project: "+project.name);
+   await recordActivity("project_deleted","project",project.id,"Deleted project: "+project.name);
+   if(paths.length){
+    const {error:storageError}=await supabase.storage.from("studiodesk-files").remove(paths);
+    if(storageError)setError("Project deleted, but one or more private storage files could not be cleaned up. Workspace administrator review is required.");
+   }
   }catch(e){setError(e instanceof Error?e.message:"Could not delete project.")}finally{setBusy(false)}
  }
 
