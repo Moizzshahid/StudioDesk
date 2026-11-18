@@ -79,11 +79,7 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 ### 3. Create the database
 
-In your Supabase project's SQL Editor, run:
-
-`supabase/migrations/0001_initial_schema.sql`, then `supabase/migrations/0002_security_and_indexes.sql`
-
-These migrations create workspaces, membership, clients, projects, tasks, memories, activity events, indexes, a signup trigger, and workspace-scoped RLS policies. The second migration hardens the security-definer functions and indexes. Apply them in order to a fresh project; do not blindly rerun them over a database with existing application data.
+In your Supabase project, apply every timestamped SQL file in `supabase/migrations/` in ascending filename order. The seven files correspond to the seven migrations already recorded in the production database. For a fresh project, apply all seven; this creates the complete schema, private helper functions, RLS policies, activity events, private attachment storage policies, indexes, and `updated_at` triggers. For the existing production project, do not replay these migrations manually: its migration history already contains these versions. Use the Supabase CLI migration workflow for future changes and verify `supabase migration list` before pushing.
 
 ### 4. Start the application
 
