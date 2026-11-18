@@ -81,9 +81,9 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-`supabase/migrations/0001_initial_schema.sql`
+`supabase/migrations/0001_initial_schema.sql`, then `supabase/migrations/0002_security_and_indexes.sql`
 
-This migration creates workspaces, membership, clients, projects, tasks, memories, activity events, indexes, a signup trigger, and workspace-scoped RLS policies. Apply it to a fresh project; do not blindly rerun it over a database with existing application data.
+These migrations create workspaces, membership, clients, projects, tasks, memories, activity events, indexes, a signup trigger, and workspace-scoped RLS policies. The second migration hardens the security-definer functions and indexes. Apply them in order to a fresh project; do not blindly rerun them over a database with existing application data.
 
 ### 4. Start the application
 
