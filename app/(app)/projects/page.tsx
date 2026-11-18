@@ -40,8 +40,13 @@ export default function Projects() {
   finally {setBusy(false);}
  }
  async function changeStatus(id:string,next:string) {
-  const {error:err}=await supabase.from("projects").update({status:next}).eq("id",id);
-  if(err) setError(err.message); else await load();
+  setError("");
+  try {
+   const workspace=await getWorkspaceId();
+   const {error:err}=await supabase.from("projects").update({status:next}).eq("id",id).eq("workspace_id",workspace);
+   if(err) throw err;
+   await load();
+  } catch(e) {setError(e instanceof Error?e.message:"Could not update project.");}
  }
  const filtered=useMemo(()=>rows.filter(p=>(filter==="all"||p.status===filter)&&(p.name+" "+(p.description||"")).toLowerCase().includes(query.toLowerCase())),[rows,filter,query]);
  return <div className="page">

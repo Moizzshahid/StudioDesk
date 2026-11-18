@@ -27,7 +27,7 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Overview | Projects, open tasks, clients, and saved memory counts |
 | Projects | Create, search, filter by status, set due dates, update status |
 | Tasks | Create, search, filter, assign project, set priority/due date, complete/reopen/delete |
-| Clients | Save contact details and internal notes |
+| Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
 | Interface | Responsive dashboard, navigation, forms, and empty states |
@@ -103,6 +103,10 @@ npm run start
 
 Set the same two public environment variables in your deployment provider and configure the production URL in Supabase Auth's allowed redirect/site URL settings.
 
+## Deployment
+
+See [Deployment guide](docs/DEPLOYMENT.md) for the Vercel + Supabase production setup checklist, required environment variables, Auth URL configuration, and post-deploy smoke tests.
+
 ## Repository structure
 
 ```text
@@ -121,7 +125,7 @@ studioDesk/
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/                # Header, sidebar, app shell
-├── docs/                      # Vision, architecture, roadmap
+├── docs/                      # Vision, architecture, roadmap, deployment
 ├── lib/                       # Supabase and workspace helpers
 ├── supabase/migrations/       # Versioned database schema
 ├── .env.example

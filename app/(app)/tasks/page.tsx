@@ -48,13 +48,23 @@ export default function Tasks() {
   finally {setBusy(false);}
  }
  async function updateStatus(id:string,status:string) {
-  const {error:err}=await supabase.from("tasks").update({status}).eq("id",id);
-  if(err)setError(err.message);else await load();
+  setError("");
+  try {
+   const workspace=await getWorkspaceId();
+   const {error:err}=await supabase.from("tasks").update({status}).eq("id",id).eq("workspace_id",workspace);
+   if(err) throw err;
+   await load();
+  } catch(e) {setError(e instanceof Error?e.message:"Could not update task.");}
  }
  async function remove(id:string) {
   if(!window.confirm("Delete this task?")) return;
-  const {error:err}=await supabase.from("tasks").delete().eq("id",id);
-  if(err)setError(err.message);else await load();
+  setError("");
+  try {
+   const workspace=await getWorkspaceId();
+   const {error:err}=await supabase.from("tasks").delete().eq("id",id).eq("workspace_id",workspace);
+   if(err) throw err;
+   await load();
+  } catch(e) {setError(e instanceof Error?e.message:"Could not delete task.");}
  }
  const filtered=useMemo(()=>rows.filter(t=>(filter==="all"||t.status===filter)&&(t.title+" "+(t.description||"")).toLowerCase().includes(query.toLowerCase())),[rows,filter,query]);
  const projectName=(id:string|null)=>projects.find(p=>p.id===id)?.name||"General";
