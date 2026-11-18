@@ -13,6 +13,7 @@ import {
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabase";
 import { getWorkspaceId } from "@/lib/workspace";
+import { recordActivity } from "@/lib/activity";
 
 const categories = [
   { value: "client_preference", label: "Client preference" },
@@ -190,6 +191,7 @@ export default function StudioMemory() {
           });
 
       if (result.error) throw result.error;
+      void recordActivity(editingId ? "memory_updated" : "memory_created", "memory", editingId, `${editingId ? "Updated" : "Saved"} memory: ${title}`);
 
       setShowForm(false);
       setEditingId(null);
@@ -214,6 +216,7 @@ export default function StudioMemory() {
         .eq("id", memory.id)
         .eq("workspace_id", workspace);
       if (deleteError) throw deleteError;
+      void recordActivity("memory_deleted", "memory", memory.id, `Deleted memory: ${memory.title}`);
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not delete this memory.");
