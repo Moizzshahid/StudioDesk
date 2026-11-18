@@ -64,8 +64,9 @@ export default function ProjectDetail(){
   if(!window.confirm("Delete "+file.file_name+" from this project?"))return;
   setFileError("");try{
    const workspace=await getWorkspaceId();
-   const {error:e}=await supabase.from("project_attachments").delete().eq("id",file.id).eq("workspace_id",workspace).eq("project_id",id);
+   const {data:deleted,error:e}=await supabase.from("project_attachments").delete().eq("id",file.id).eq("workspace_id",workspace).eq("project_id",id).select("id").maybeSingle();
    if(e)throw e;
+   if(!deleted)throw new Error("Attachment was not deleted. Refresh and check workspace access.");
    const {error:storageError}=await supabase.storage.from("studiodesk-files").remove([file.storage_path]);
    if(storageError)setFileError("The document was removed from this project, but its private storage object could not be cleaned up. Contact the workspace administrator.");
    await recordActivity("attachment_deleted","project",id,"Deleted document: "+file.file_name);
@@ -80,8 +81,9 @@ export default function ProjectDetail(){
    const {data:files,error:fileError}=await supabase.from("project_attachments").select("storage_path").eq("project_id",id).eq("workspace_id",workspace);
    if(fileError)throw fileError;
    const paths=(files||[]).map(file=>file.storage_path);
-   const {error:deleteError}=await supabase.from("projects").delete().eq("id",id).eq("workspace_id",workspace);
+   const {data:deleted,error:deleteError}=await supabase.from("projects").delete().eq("id",id).eq("workspace_id",workspace).select("id").maybeSingle();
    if(deleteError)throw deleteError;
+   if(!deleted)throw new Error("Project was not deleted. Refresh and check workspace access.");
    await recordActivity("project_deleted","project",id,"Deleted project: "+project.name);
    if(paths.length){
     const {error:removeError}=await supabase.storage.from("studiodesk-files").remove(paths);
