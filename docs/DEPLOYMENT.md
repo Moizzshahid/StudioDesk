@@ -5,11 +5,11 @@ StudioDesk is a Next.js application backed by Supabase. A successful GitHub buil
 ## 1. Prepare Supabase
 
 1. Create a Supabase project.
-2. Open **SQL Editor** and run `supabase/migrations/0001_initial_schema.sql` once on the new, empty project.
+2. Open **SQL Editor** and run `supabase/migrations/0001_initial_schema.sql`, then `supabase/migrations/0002_security_and_indexes.sql`, in that order on the new, empty project.
 3. In **Authentication → Providers**, enable Email/password sign-in.
 4. Decide whether email confirmation is required. If enabled, configure the email provider and test the confirmation email.
 5. In **Authentication → URL Configuration**, set the production Site URL to the final Vercel domain and add the local development URL plus any preview URLs you intend to use.
-6. Copy the Project URL and the publishable/anon key from the project's API settings.
+6. Copy the Project URL and the publishable key (or legacy anon key) from the project's API settings.
 
 Do not use the service-role key in this browser application. Do not put it in a `NEXT_PUBLIC_*` variable.
 
