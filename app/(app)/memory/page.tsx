@@ -13,6 +13,7 @@ import {
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabase";
 import { getWorkspaceId } from "@/lib/workspace";
+import { recordActivity } from "@/lib/activity";
 
 const categories = [
   { value: "client_preference", label: "Client preference" },
