@@ -20,19 +20,31 @@ export default function Login() {
     setMessage("");
     try {
       if (!supabaseConfigured) throw new Error("Connect Supabase first. See README.md.");
+
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: name, workspace_name: name ? name + "'s Studio" : undefined } },
+          options: {
+            data: {
+              full_name: name.trim(),
+              workspace_name: name.trim() ? name.trim() + "'s Studio" : undefined,
+            },
+          },
         });
         if (error) throw error;
-        setMessage("Account created. Confirm your email if confirmation is enabled, then sign in.");
+
+        if (data.session) {
+          router.replace("/dashboard");
+          return;
+        }
+
+        setMessage("Account created. Check your inbox to confirm your email, then sign in.");
         setMode("login");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        router.push("/dashboard");
+        router.replace("/dashboard");
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Something went wrong.");
@@ -59,13 +71,13 @@ export default function Login() {
           <h2>{mode === "login" ? "Sign in to StudioDesk" : "Create your workspace"}</h2>
           <p>A little more clarity for the work that matters.</p>
           <form onSubmit={submit}>
-            {mode === "signup" && <label>Your name<input required value={name} onChange={e => setName(e.target.value)} /></label>}
-            <label>Email address<input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@studio.com" /></label>
+            {mode === "signup" && <label>Your name<input required maxLength={120} value={name} onChange={e => setName(e.target.value)} /></label>}
+            <label>Email address<input type="email" required maxLength={254} value={email} onChange={e => setEmail(e.target.value)} placeholder="you@studio.com" /></label>
             <label>Password<input type="password" minLength={6} required value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" /></label>
             <button disabled={busy}>{busy ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"} <ArrowUpRight size={16} /></button>
           </form>
-          {message && <div className="notice">{message}</div>}
-          <div className="switch">{mode === "login" ? "New to StudioDesk?" : "Already have an account?"} <button onClick={() => setMode(mode === "login" ? "signup" : "login")}>{mode === "login" ? "Create account" : "Sign in"}</button></div>
+          {message && <div className="notice" role="status" aria-live="polite">{message}</div>}
+          <div className="switch">{mode === "login" ? "New to StudioDesk?" : "Already have an account?"} <button type="button" onClick={() => { setMessage(""); setMode(mode === "login" ? "signup" : "login"); }}>{mode === "login" ? "Create account" : "Sign in"}</button></div>
         </div>
       </section>
     </main>
