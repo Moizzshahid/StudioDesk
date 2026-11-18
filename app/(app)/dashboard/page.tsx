@@ -26,15 +26,19 @@ export default function Dashboard() {
     setError("");
     try {
       const workspace = await getWorkspaceId();
-      const [p, t, c, m, a] = await Promise.all([
+      const [p, t, activeProjects, openTasks, c, m, a] = await Promise.all([
         supabase.from("projects").select("id,name,status,description,due_date").eq("workspace_id", workspace).order("created_at", { ascending: false }).limit(5),
         supabase.from("tasks").select("id,title,status,due_date,priority").eq("workspace_id", workspace).neq("status", "done").order("due_date", { ascending: true, nullsFirst: false }).limit(6),
+        supabase.from("projects").select("id", { count: "exact", head: true }).eq("workspace_id", workspace).neq("status", "completed"),
+        supabase.from("tasks").select("id", { count: "exact", head: true }).eq("workspace_id", workspace).neq("status", "done"),
         supabase.from("clients").select("id", { count: "exact", head: true }).eq("workspace_id", workspace),
         supabase.from("memories").select("id", { count: "exact", head: true }).eq("workspace_id", workspace),
         supabase.from("activity_events").select("id,summary,entity_type,created_at").eq("workspace_id", workspace).order("created_at", { ascending: false }).limit(5),
       ]);
       if (p.error) throw p.error;
       if (t.error) throw t.error;
+      if (activeProjects.error) throw activeProjects.error;
+      if (openTasks.error) throw openTasks.error;
       if (c.error) throw c.error;
       if (m.error) throw m.error;
       if (a.error) throw a.error;
@@ -42,8 +46,8 @@ export default function Dashboard() {
       setTasks((t.data || []) as Task[]);
       setEvents((a.data || []) as Event[]);
       setStats([
-        (p.data || []).filter((item) => item.status !== "completed").length,
-        t.data?.length || 0,
+        activeProjects.count || 0,
+        openTasks.count || 0,
         c.count || 0,
         m.count || 0,
       ]);

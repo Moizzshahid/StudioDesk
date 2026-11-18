@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, CalendarDays, CheckCircle2, Download, ExternalLink, FileText, Link2, Plus, Search, Trash2, Upload, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, CheckCircle2, Download, ExternalLink, FileText, Link2, Plus, Search, Trash2, Upload, X, RefreshCw, AlertTriangle } from "lucide-react";
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabase";
 import { getWorkspaceId } from "@/lib/workspace";
 import { recordActivity } from "@/lib/activity";
+import { discardStorageCleanup, enqueueStorageCleanup, processStorageCleanup, type StorageCleanupJob } from "@/lib/storageCleanup";
 
 type Project = { id:string; name:string; description:string|null; status:string; due_date:string|null; client_id:string|null; created_at:string; updated_at:string };
 type RecordRow = { id:string; record_type:string; title:string; content:string|null; url:string|null; created_at:string };
@@ -22,13 +23,14 @@ export default function ProjectDetail(){
  const params=useParams<{id:string}>(); const id=params.id;
  const [project,setProject]=useState<Project|null>(null); const [records,setRecords]=useState<RecordRow[]>([]); const [tasks,setTasks]=useState<Task[]>([]); const [client,setClient]=useState<Client|null>(null);
  const [loading,setLoading]=useState(true); const [error,setError]=useState(""); const [show,setShow]=useState(false); const [editingRecord,setEditingRecord]=useState<RecordRow|null>(null); const [editProjectOpen,setEditProjectOpen]=useState(false); const [projectName,setProjectName]=useState(""); const [projectDescription,setProjectDescription]=useState(""); const [projectDueDate,setProjectDueDate]=useState(""); const [projectClientId,setProjectClientId]=useState(""); const [clients,setClients]=useState<Client[]>([]); const [kind,setKind]=useState("note"); const [title,setTitle]=useState(""); const [content,setContent]=useState(""); const [url,setUrl]=useState(""); const [busy,setBusy]=useState(false); const [query,setQuery]=useState("");
- const [attachments,setAttachments]=useState<Attachment[]>([]); const [fileDescription,setFileDescription]=useState(""); const [uploading,setUploading]=useState(false); const [fileError,setFileError]=useState("");
- const load=useCallback(async()=>{setError("");try{const workspace=await getWorkspaceId();const [p,r,t,a]=await Promise.all([
+ const [attachments,setAttachments]=useState<Attachment[]>([]); const [cleanupJobs,setCleanupJobs]=useState<StorageCleanupJob[]>([]); const [retryingCleanup,setRetryingCleanup]=useState<string|null>(null); const [fileDescription,setFileDescription]=useState(""); const [uploading,setUploading]=useState(false); const [fileError,setFileError]=useState("");
+ const load=useCallback(async()=>{setError("");try{const workspace=await getWorkspaceId();const [p,r,t,a,j]=await Promise.all([
  supabase.from("projects").select("id,name,description,status,due_date,client_id,created_at,updated_at").eq("id",id).eq("workspace_id",workspace).single(),
  supabase.from("project_records").select("id,record_type,title,content,url,created_at").eq("project_id",id).eq("workspace_id",workspace).order("created_at",{ascending:false}),
  supabase.from("tasks").select("id,title,status,priority,due_date").eq("project_id",id).eq("workspace_id",workspace).order("created_at",{ascending:false}),
- supabase.from("project_attachments").select("id,file_name,storage_path,mime_type,file_size,description,created_at").eq("project_id",id).eq("workspace_id",workspace).order("created_at",{ascending:false})
- ]);if(p.error)throw p.error;if(r.error)throw r.error;if(t.error)throw t.error;if(a.error)throw a.error;setProject(p.data as Project);setRecords((r.data||[]) as RecordRow[]);setTasks((t.data||[]) as Task[]);setAttachments((a.data||[]) as Attachment[]);const clientRows=await supabase.from("clients").select("id,name,company").eq("workspace_id",workspace).order("name");if(clientRows.error)throw clientRows.error;setClients((clientRows.data||[]) as Client[]);if(p.data.client_id){const c=await supabase.from("clients").select("id,name,company").eq("id",p.data.client_id).eq("workspace_id",workspace).maybeSingle();if(c.error)throw c.error;setClient(c.data as Client|null)}else setClient(null);
+ supabase.from("project_attachments").select("id,file_name,storage_path,mime_type,file_size,description,created_at").eq("project_id",id).eq("workspace_id",workspace).order("created_at",{ascending:false}),
+ supabase.from("storage_cleanup_jobs").select("id,workspace_id,storage_paths,created_at").eq("workspace_id",workspace).order("created_at",{ascending:true})
+ ]);if(p.error)throw p.error;if(r.error)throw r.error;if(t.error)throw t.error;if(a.error)throw a.error;if(j.error)throw j.error;setProject(p.data as Project);setRecords((r.data||[]) as RecordRow[]);setTasks((t.data||[]) as Task[]);setAttachments((a.data||[]) as Attachment[]);setCleanupJobs((j.data||[]) as StorageCleanupJob[]);const clientRows=await supabase.from("clients").select("id,name,company").eq("workspace_id",workspace).order("name");if(clientRows.error)throw clientRows.error;setClients((clientRows.data||[]) as Client[]);if(p.data.client_id){const c=await supabase.from("clients").select("id,name,company").eq("id",p.data.client_id).eq("workspace_id",workspace).maybeSingle();if(c.error)throw c.error;setClient(c.data as Client|null)}else setClient(null);
  }catch(e){setError(e instanceof Error?e.message:"Could not load this project.");}finally{setLoading(false)}},[id]);
  useEffect(()=>{void load()},[load]);
  async function save(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");try{const workspace=await getWorkspaceId();const payload={record_type:kind,title:title.trim(),content:content.trim()||null,url:url.trim()||null};const result=editingRecord?await supabase.from("project_records").update(payload).eq("id",editingRecord.id).eq("workspace_id",workspace).eq("project_id",id):await supabase.from("project_records").insert({...payload,workspace_id:workspace,project_id:id,created_by:(await supabase.auth.getUser()).data.user?.id});if(result.error)throw result.error;void recordActivity(editingRecord?"project_record_updated":"project_record_created","project",id,(editingRecord?"Updated project record: ":"Added project record: ")+title.trim());setTitle("");setContent("");setUrl("");setKind("note");setEditingRecord(null);setShow(false);await load()}catch(e){setError(e instanceof Error?e.message:"Could not save record.")}finally{setBusy(false)}}
@@ -48,8 +50,14 @@ export default function ProjectDetail(){
    const {error:uploadError}=await supabase.storage.from("studiodesk-files").upload(path,file,{contentType:file.type,upsert:false});
    if(uploadError)throw uploadError;
    const {data:auth}=await supabase.auth.getUser();
-   const {error:insertError}=await supabase.from("project_attachments").insert({workspace_id:workspace,project_id:id,file_name:file.name,storage_path:path,mime_type:file.type,file_size:file.size,description:fileDescription.trim()||null,uploaded_by:auth.user?.id});
-   if(insertError){await supabase.storage.from("studiodesk-files").remove([path]);throw insertError}
+   if(!auth.user)throw new Error("Your session expired. Sign in again before uploading.");
+   const {error:insertError}=await supabase.from("project_attachments").insert({workspace_id:workspace,project_id:id,file_name:file.name,storage_path:path,mime_type:file.type,file_size:file.size,description:fileDescription.trim()||null,uploaded_by:auth.user.id});
+   if(insertError){
+    const cleanupId=await enqueueStorageCleanup(workspace,[path],auth.user.id);
+    try{if(cleanupId)await processStorageCleanup(cleanupId,workspace)}
+    catch(cleanupError){await load();throw new Error("The document record could not be saved. Its uploaded file is queued for cleanup. "+(cleanupError instanceof Error?cleanupError.message:""))}
+    throw insertError;
+   }
    setFileDescription("");void recordActivity("attachment_uploaded","project",id,"Uploaded document: "+file.name);await load();
   }catch(e){setFileError(e instanceof Error?e.message:"Could not upload this file.")}finally{setUploading(false)}
  }
@@ -58,22 +66,44 @@ export default function ProjectDetail(){
  }
  async function deleteAttachment(file:Attachment){
   if(!window.confirm("Delete "+file.file_name+" from this project?"))return;
-  setFileError("");try{const {error:storageError}=await supabase.storage.from("studiodesk-files").remove([file.storage_path]);if(storageError)throw storageError;const workspace=await getWorkspaceId();const {error:e}=await supabase.from("project_attachments").delete().eq("id",file.id).eq("workspace_id",workspace).eq("project_id",id);if(e)throw e;void recordActivity("attachment_deleted","project",id,"Deleted document: "+file.file_name);await load()}catch(e){setFileError(e instanceof Error?e.message:"Could not delete this document.")}
+  setFileError("");let jobId:string|null=null;
+  try{
+   const workspace=await getWorkspaceId();const {data:auth}=await supabase.auth.getUser();
+   jobId=await enqueueStorageCleanup(workspace,[file.storage_path],auth.user!.id);
+   const {data:deleted,error:e}=await supabase.from("project_attachments").delete().eq("id",file.id).eq("workspace_id",workspace).eq("project_id",id).select("id");
+   if(e)throw e;if(!deleted?.length)throw new Error("Document record was not deleted. Refresh and try again.");
+   void recordActivity("attachment_deleted","project",id,"Deleted document: "+file.file_name);
+   if(jobId)await processStorageCleanup(jobId,workspace);
+   await load();
+  }catch(e){
+   if(jobId){try{const workspace=await getWorkspaceId();const {data:job}=await supabase.from("storage_cleanup_jobs").select("id").eq("id",jobId).eq("workspace_id",workspace).maybeSingle();if(job){const {data:row}=await supabase.from("project_attachments").select("id").eq("id",file.id).eq("workspace_id",workspace).maybeSingle();if(row)await discardStorageCleanup(jobId,workspace);else await load()}}catch{/* preserve the original message */}}
+   setFileError(e instanceof Error?e.message:"Could not delete this document.");
+  }
+ }
+ async function retryProjectCleanup(job:StorageCleanupJob){
+  setRetryingCleanup(job.id);setFileError("");
+  try{await processStorageCleanup(job.id,job.workspace_id);setCleanupJobs(current=>current.filter(item=>item.id!==job.id))}
+  catch(e){setFileError(e instanceof Error?e.message:"Could not finish document cleanup. Retry again.")}
+  finally{setRetryingCleanup(null)}
  }
  async function deleteProject(){
   if(!project||!window.confirm("Permanently delete “"+project.name+"”? Its project records and attachments will also be deleted. This cannot be undone."))return;
-  setBusy(true);setError("");
+  setBusy(true);setError("");let jobId:string|null=null;
   try{
-   const workspace=await getWorkspaceId();
+   const workspace=await getWorkspaceId();const {data:auth}=await supabase.auth.getUser();
    const {data:files,error:fileError}=await supabase.from("project_attachments").select("storage_path").eq("project_id",id).eq("workspace_id",workspace);
    if(fileError)throw fileError;
    const paths=(files||[]).map(file=>file.storage_path);
-   if(paths.length){const {error:removeError}=await supabase.storage.from("studiodesk-files").remove(paths);if(removeError)throw removeError}
-   const {error:deleteError}=await supabase.from("projects").delete().eq("id",id).eq("workspace_id",workspace);
-   if(deleteError)throw deleteError;
+   if(paths.length)jobId=await enqueueStorageCleanup(workspace,paths,auth.user!.id);
+   const {data:deleted,error:deleteError}=await supabase.from("projects").delete().eq("id",id).eq("workspace_id",workspace).select("id");
+   if(deleteError)throw deleteError;if(!deleted?.length)throw new Error("Project was not deleted. Refresh and try again.");
    void recordActivity("project_deleted","project",id,"Deleted project: "+project.name);
+   if(jobId){try{await processStorageCleanup(jobId,workspace)}catch(cleanupError){setError(cleanupError instanceof Error?cleanupError.message:"Project deleted. Document cleanup is pending; retry it from Projects.")}}
    window.location.assign("/projects");
-  }catch(e){setError(e instanceof Error?e.message:"Could not delete project. No project records were intentionally removed.")}finally{setBusy(false)}
+  }catch(e){
+   if(jobId){try{await discardStorageCleanup(jobId,await getWorkspaceId())}catch{/* preserve original error */}}
+   setError(e instanceof Error?e.message:"Could not delete project.");
+  }finally{setBusy(false)}
  }
 
  const visible=useMemo(()=>records.filter(r=>(r.title+" "+(r.content||"")).toLowerCase().includes(query.toLowerCase())),[records,query]);
@@ -91,6 +121,7 @@ export default function ProjectDetail(){
  <section className="panel project-attachments">
   <div className="panelhead"><div><h3>Documents & attachments</h3><p>Keep briefs, contracts, references and deliverables beside the work.</p></div><span className="attachment-count">{attachments.length} FILES</span></div>
   <div className="attachment-upload-row"><label className="button button-light attachment-upload"><Upload size={15}/>{uploading?"Uploading…":"Upload document"}<input type="file" disabled={uploading} accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp,.svg,.zip" onChange={uploadAttachment}/></label><input className="attachment-description" value={fileDescription} onChange={e=>setFileDescription(e.target.value)} placeholder="Optional description for next upload"/></div>
+  {cleanupJobs.length>0&&<div className="cleanup-inline"><b><AlertTriangle size={14}/> Pending document cleanup</b>{cleanupJobs.map(job=><div key={job.id}><span>{job.storage_paths.length} file(s) awaiting removal</span><button className="button button-light" disabled={retryingCleanup===job.id} onClick={()=>void retryProjectCleanup(job)}><RefreshCw size={13}/>{retryingCleanup===job.id?"Retrying…":"Retry"}</button></div>)}</div>}
   <p className="attachment-guidance">Private to this workspace · 20 MB max per file · PDF, Office, images, CSV, TXT and ZIP</p>
   {fileError&&<div className="notice" role="alert">{fileError}</div>}
   {attachments.length?attachments.map(file=><div className="attachment-row" key={file.id}><span className="attachment-file-icon"><FileText size={17}/></span><span className="attachment-file-copy"><b>{file.file_name}</b><small>{(file.file_size/1024/1024).toFixed(file.file_size<1024*1024?3:1)} MB · {file.description||file.mime_type} · {new Date(file.created_at).toLocaleDateString()}</small></span><button className="attachment-open" onClick={()=>void openAttachment(file)} aria-label={"Download "+file.file_name}><Download size={16}/></button><button className="record-delete" onClick={()=>void deleteAttachment(file)} aria-label={"Delete "+file.file_name}><Trash2 size={15}/></button></div>):<div className="attachment-empty"><FileText size={20}/><b>No documents attached yet</b><span>Upload the brief, a client reference or the final deliverable.</span></div>}

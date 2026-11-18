@@ -24,13 +24,15 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | --- | --- |
 | Authentication | Email/password sign-up and sign-in with Supabase Auth |
 | Workspace | Signup-time personal workspace provisioning |
-| Overview | Projects, open tasks, clients, and saved memory counts |
-| Projects | Create, search, filter by status, set due dates, update status |
-| Tasks | Create, search, filter, assign project, set priority/due date, complete/reopen/delete |
+| Overview | Recent projects and tasks, exact workspace-wide open counts, clients, memories, and activity |
+| Projects | Create, search, filter, edit details, set due dates, update status, delete with retryable document cleanup |
+| Tasks | Create, edit, search, filter, assign project, set priority/due date, complete/reopen/delete |
 | Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
-| Interface | Responsive dashboard, navigation, forms, and empty states |
+| Documents | Private project attachments with workspace/project-scoped storage access and retryable cleanup queue |
+| Activity | Workspace-scoped activity timeline for project, task, memory and document actions |
+| Interface | Responsive dashboard, navigation, forms, command search, and empty states |
 
 ### Studio Memory
 
@@ -48,7 +50,7 @@ Capture client preferences, brand guidelines, creative decisions, feedback, meet
 
 ### Requirements
 
-- Node.js 20.9+
+- Node.js 22.x
 - npm
 - A Supabase project
 
@@ -81,9 +83,9 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-`supabase/migrations/0001_initial_schema.sql`, then `supabase/migrations/0002_security_and_indexes.sql`
+all SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`
 
-These migrations create workspaces, membership, clients, projects, tasks, memories, activity events, indexes, a signup trigger, and workspace-scoped RLS policies. The second migration hardens the security-definer functions and indexes. Apply them in order to a fresh project; do not blindly rerun them over a database with existing application data.
+Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, and retryable storage cleanup. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
 
 ### 4. Start the application
 
@@ -117,7 +119,7 @@ studioDesk/
 │   │   ├── clients/           # Client directory
 │   │   ├── dashboard/         # Workspace overview
 │   │   ├── memory/            # Human-curated Studio Memory (CRUD, search, filters)
-│   │   ├── projects/          # Project management
+│   │   ├── projects/          # Project management and document cleanup retry
 │   │   ├── tasks/             # Task management
 │   │   └── layout.tsx         # Authenticated shell
 │   ├── login/                 # Sign-in and sign-up
@@ -126,8 +128,8 @@ studioDesk/
 │   └── page.tsx
 ├── components/                # Header, sidebar, app shell
 ├── docs/                      # Vision, architecture, roadmap, deployment
-├── lib/                       # Supabase and workspace helpers
-├── supabase/migrations/       # Versioned database schema
+├── lib/                       # Supabase, workspace, activity, and storage cleanup helpers
+├── supabase/migrations/       # Ordered, versioned database schema
 ├── .env.example
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -142,7 +144,9 @@ This is an early-stage self-hosted foundation, not an independently audited prod
 - Review every RLS policy and relational constraint.
 - Keep service-role credentials server-side and out of browser bundles.
 - Configure production auth URLs, backups, monitoring, and incident procedures.
-- Add server-side validation and automated authorization tests before inviting a team.
+- Run the documented authenticated smoke tests and two-account tenant-isolation checks before inviting a team.
+- Configure leaked-password protection in Supabase Auth and review current Security Advisor findings.
+- Keep a tested backup and recovery procedure; confirm pending storage cleanup jobs are empty.
 - Do not store passwords, payment details, or highly sensitive personal data in Studio Memory.
 
 Report suspected vulnerabilities privately using the contact guidance in [SECURITY.md](SECURITY.md).

@@ -301,3 +301,13 @@ body{font-family:"DM Sans",sans-serif;letter-spacing:-.01em}
 .reset-auth .auth-panel{min-height:100svh}
 .reset-back{display:flex;align-items:center;justify-content:center;gap:6px;color:#637b68;font-size:10px;font-weight:700;margin-top:24px}
 @media(max-width:720px){.reset-auth .auth-panel{min-height:100svh}}
+
+/* Reliable cleanup queue states */
+.cleanup-panel{margin:0 0 20px;padding:18px 20px}
+.cleanup-panel .panelhead h3{display:flex;align-items:center;gap:8px;color:#8b6545}
+.cleanup-job,.cleanup-inline>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #eeeee7;font-size:10px;color:#737b70}
+.cleanup-job .button,.cleanup-inline .button{white-space:nowrap}
+.cleanup-inline{display:grid;gap:7px;margin:12px 0;padding:13px 15px;border:1px solid #e8dfd2;border-radius:8px;background:#fbf8f2}
+.cleanup-inline>b{display:flex;align-items:center;gap:7px;color:#8b6545;font-size:10px}
+.cleanup-inline>div{padding:7px 0 0}
+@media(max-width:600px){.cleanup-job,.cleanup-inline>div{align-items:flex-start;flex-direction:column}.cleanup-job .button,.cleanup-inline .button{width:100%;justify-content:center}}
