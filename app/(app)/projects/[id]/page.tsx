@@ -50,8 +50,14 @@ export default function ProjectDetail(){
    const {error:uploadError}=await supabase.storage.from("studiodesk-files").upload(path,file,{contentType:file.type,upsert:false});
    if(uploadError)throw uploadError;
    const {data:auth}=await supabase.auth.getUser();
-   const {error:insertError}=await supabase.from("project_attachments").insert({workspace_id:workspace,project_id:id,file_name:file.name,storage_path:path,mime_type:file.type,file_size:file.size,description:fileDescription.trim()||null,uploaded_by:auth.user?.id});
-   if(insertError){await supabase.storage.from("studiodesk-files").remove([path]);throw insertError}
+   if(!auth.user)throw new Error("Your session expired. Sign in again before uploading.");
+   const {error:insertError}=await supabase.from("project_attachments").insert({workspace_id:workspace,project_id:id,file_name:file.name,storage_path:path,mime_type:file.type,file_size:file.size,description:fileDescription.trim()||null,uploaded_by:auth.user.id});
+   if(insertError){
+    const cleanupId=await enqueueStorageCleanup(workspace,[path],auth.user.id);
+    try{if(cleanupId)await processStorageCleanup(cleanupId,workspace)}
+    catch(cleanupError){await load();throw new Error("The document record could not be saved. Its uploaded file is queued for cleanup. "+(cleanupError instanceof Error?cleanupError.message:""))}
+    throw insertError;
+   }
    setFileDescription("");void recordActivity("attachment_uploaded","project",id,"Uploaded document: "+file.name);await load();
   }catch(e){setFileError(e instanceof Error?e.message:"Could not upload this file.")}finally{setUploading(false)}
  }
