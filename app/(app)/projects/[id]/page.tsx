@@ -49,16 +49,28 @@ export default function ProjectDetail(){
    if(uploadError)throw uploadError;
    const {data:auth}=await supabase.auth.getUser();
    const {error:insertError}=await supabase.from("project_attachments").insert({workspace_id:workspace,project_id:id,file_name:file.name,storage_path:path,mime_type:file.type,file_size:file.size,description:fileDescription.trim()||null,uploaded_by:auth.user?.id});
-   if(insertError){await supabase.storage.from("studiodesk-files").remove([path]);throw insertError}
+   if(insertError){
+    const {error:cleanupError}=await supabase.storage.from("studiodesk-files").remove([path]);
+    if(cleanupError)throw new Error(insertError.message+" The uploaded object could not be rolled back; storage cleanup is required.");
+    throw insertError;
+   }
    setFileDescription("");void recordActivity("attachment_uploaded","project",id,"Uploaded document: "+file.name);await load();
   }catch(e){setFileError(e instanceof Error?e.message:"Could not upload this file.")}finally{setUploading(false)}
  }
  async function openAttachment(file:Attachment){
-  setFileError("");try{const {data,error:e}=await supabase.storage.from("studiodesk-files").createSignedUrl(file.storage_path,300,{download:file.file_name});if(e)throw e;if(data?.signedUrl)window.open(data.signedUrl,"_blank","noopener,noreferrer")}catch(e){setFileError(e instanceof Error?e.message:"Could not open this document.")}
+  setFileError("");try{const {data,error:e}=await supabase.storage.from("studiodesk-files").createSignedUrl(file.storage_path,300,{download:file.file_name});if(e)throw e;if(data?.signedUrl)window.location.assign(data.signedUrl);else throw new Error("No download link was returned.")}catch(e){setFileError(e instanceof Error?e.message:"Could not open this document.")}
  }
  async function deleteAttachment(file:Attachment){
   if(!window.confirm("Delete "+file.file_name+" from this project?"))return;
-  setFileError("");try{const {error:storageError}=await supabase.storage.from("studiodesk-files").remove([file.storage_path]);if(storageError)throw storageError;const workspace=await getWorkspaceId();const {error:e}=await supabase.from("project_attachments").delete().eq("id",file.id).eq("workspace_id",workspace).eq("project_id",id);if(e)throw e;void recordActivity("attachment_deleted","project",id,"Deleted document: "+file.file_name);await load()}catch(e){setFileError(e instanceof Error?e.message:"Could not delete this document.")}
+  setFileError("");try{
+   const workspace=await getWorkspaceId();
+   const {error:e}=await supabase.from("project_attachments").delete().eq("id",file.id).eq("workspace_id",workspace).eq("project_id",id);
+   if(e)throw e;
+   const {error:storageError}=await supabase.storage.from("studiodesk-files").remove([file.storage_path]);
+   if(storageError)setFileError("The document was removed from this project, but its private storage object could not be cleaned up. Contact the workspace administrator.");
+   await recordActivity("attachment_deleted","project",id,"Deleted document: "+file.file_name);
+   await load();
+  }catch(e){setFileError(e instanceof Error?e.message:"Could not delete this document.")}
  }
  async function deleteProject(){
   if(!project||!window.confirm("Permanently delete “"+project.name+"”? Its project records and attachments will also be deleted. This cannot be undone."))return;
@@ -68,10 +80,16 @@ export default function ProjectDetail(){
    const {data:files,error:fileError}=await supabase.from("project_attachments").select("storage_path").eq("project_id",id).eq("workspace_id",workspace);
    if(fileError)throw fileError;
    const paths=(files||[]).map(file=>file.storage_path);
-   if(paths.length){const {error:removeError}=await supabase.storage.from("studiodesk-files").remove(paths);if(removeError)throw removeError}
    const {error:deleteError}=await supabase.from("projects").delete().eq("id",id).eq("workspace_id",workspace);
    if(deleteError)throw deleteError;
-   void recordActivity("project_deleted","project",id,"Deleted project: "+project.name);
+   await recordActivity("project_deleted","project",id,"Deleted project: "+project.name);
+   if(paths.length){
+    const {error:removeError}=await supabase.storage.from("studiodesk-files").remove(paths);
+    if(removeError){
+     window.location.assign("/projects?notice="+encodeURIComponent("Project deleted. Some private storage files could not be cleaned up and need administrator review."));
+     return;
+    }
+   }
    window.location.assign("/projects");
   }catch(e){setError(e instanceof Error?e.message:"Could not delete project. No project records were intentionally removed.")}finally{setBusy(false)}
  }
