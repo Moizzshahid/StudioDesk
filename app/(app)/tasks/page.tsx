@@ -42,8 +42,9 @@ export default function Tasks() {
   try {
    const workspace=await getWorkspaceId();
    const {data:auth}=await supabase.auth.getUser();
-   const {error:err}=await supabase.from("tasks").insert({workspace_id:workspace,title,description:description||null,priority,project_id:projectId||null,due_date:dueDate||null,created_by:auth.user?.id});
+   const {data:created,error:err}=await supabase.from("tasks").insert({workspace_id:workspace,title,description:description||null,priority,project_id:projectId||null,due_date:dueDate||null,created_by:auth.user?.id}).select("id").single();
    if(err) throw err;
+   if(created) void recordActivity("task_created","task",created.id,`Created task: ${title.trim()}`);
    setTitle("");setDescription("");setPriority("medium");setProjectId("");setDueDate("");setShow(false);await load();
   } catch(e) {setError(e instanceof Error?e.message:"Could not save task.");}
   finally {setBusy(false);}
@@ -54,6 +55,8 @@ export default function Tasks() {
    const workspace=await getWorkspaceId();
    const {error:err}=await supabase.from("tasks").update({status}).eq("id",id).eq("workspace_id",workspace);
    if(err) throw err;
+   const task=rows.find((item)=>item.id===id);
+   void recordActivity(status==="done"?"task_completed":"task_updated","task",id,`${status==="done"?"Completed":"Updated"} task: ${task?.title || "Task"}`);
    await load();
   } catch(e) {setError(e instanceof Error?e.message:"Could not update task.");}
  }
@@ -64,6 +67,8 @@ export default function Tasks() {
    const workspace=await getWorkspaceId();
    const {error:err}=await supabase.from("tasks").delete().eq("id",id).eq("workspace_id",workspace);
    if(err) throw err;
+   const task=rows.find((item)=>item.id===id);
+   void recordActivity("task_deleted","task",id,`Deleted task: ${task?.title || "Task"}`);
    await load();
   } catch(e) {setError(e instanceof Error?e.message:"Could not delete task.");}
  }
