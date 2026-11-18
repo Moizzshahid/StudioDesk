@@ -41,8 +41,8 @@ create policy "Workspace members read project documents"
       from public.workspace_members wm
       join public.projects p on p.workspace_id = wm.workspace_id
       where wm.user_id = (select auth.uid())
-        and wm.workspace_id::text = (storage.foldername(name))[1]
-        and p.id::text = (storage.foldername(name))[2]
+        and wm.workspace_id::text = (storage.foldername(storage.objects.name))[1]
+        and p.id::text = (storage.foldername(storage.objects.name))[2]
     )
   );
 
@@ -56,8 +56,8 @@ create policy "Workspace members upload project documents"
       from public.workspace_members wm
       join public.projects p on p.workspace_id = wm.workspace_id
       where wm.user_id = (select auth.uid())
-        and wm.workspace_id::text = (storage.foldername(name))[1]
-        and p.id::text = (storage.foldername(name))[2]
+        and wm.workspace_id::text = (storage.foldername(storage.objects.name))[1]
+        and p.id::text = (storage.foldername(storage.objects.name))[2]
     )
   );
 
@@ -72,7 +72,7 @@ create policy "Workspace members delete project documents"
       select 1
       from public.workspace_members wm
       where wm.user_id = (select auth.uid())
-        and wm.workspace_id::text = (storage.foldername(name))[1]
+        and wm.workspace_id::text = (storage.foldername(storage.objects.name))[1]
     )
   );
 
