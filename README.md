@@ -83,7 +83,7 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-all SQL files in `supabase/migrations/` in filename order (`0001` through `0008`)
+all SQL files in `supabase/migrations/` in filename order (`0001` through `0009`)
 
 Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, and retryable storage cleanup. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
 
