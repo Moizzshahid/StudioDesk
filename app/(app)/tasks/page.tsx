@@ -4,6 +4,7 @@ import { Plus, Search, X, ListTodo, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabase";
 import { getWorkspaceId } from "@/lib/workspace";
+import { recordActivity } from "@/lib/activity";
 
 type Task={id:string;title:string;description:string|null;status:string;priority:string;due_date:string|null;project_id:string|null;created_at:string};
 type Project={id:string;name:string};
