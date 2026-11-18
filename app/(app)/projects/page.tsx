@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, Search, X, FolderKanban, CalendarDays, ArrowUpRight, FileText } from "lucide-react";
+import { Plus, Search, X, FolderKanban, CalendarDays, ArrowUpRight, FileText, Trash2 } from "lucide-react";
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabase";
 import { getWorkspaceId } from "@/lib/workspace";
@@ -15,12 +15,28 @@ export default function Projects(){
  useEffect(()=>{void load()},[]);
  async function add(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");try{const workspace=await getWorkspaceId();const {data:auth}=await supabase.auth.getUser();const {data:created,error:e2}=await supabase.from("projects").insert({workspace_id:workspace,name:name.trim(),description:description.trim()||null,status,due_date:dueDate||null,client_id:clientId||null,created_by:auth.user?.id}).select("id").single();if(e2)throw e2;if(created)void recordActivity("project_created","project",created.id,`Created project: ${name.trim()}`);setName("");setDescription("");setStatus("planning");setDueDate("");setClientId("");setShow(false);await load()}catch(e){setError(e instanceof Error?e.message:"Could not save project.")}finally{setBusy(false)}}
  async function changeStatus(id:string,next:string){try{const workspace=await getWorkspaceId();const {error:e}=await supabase.from("projects").update({status:next}).eq("id",id).eq("workspace_id",workspace);if(e)throw e;void recordActivity("project_status_changed","project",id,`Updated project status to ${next.replace("_"," ")}`);await load()}catch(e){setError(e instanceof Error?e.message:"Could not update project.")}}
+ async function removeProject(project:Project){
+  if(!window.confirm("Permanently delete “"+project.name+"”? Its notes, tasks links and attachments will also be removed. This cannot be undone."))return;
+  setBusy(true);setError("");
+  try{
+   const workspace=await getWorkspaceId();
+   const {data:files,error:fileError}=await supabase.from("project_attachments").select("storage_path").eq("project_id",project.id).eq("workspace_id",workspace);
+   if(fileError)throw fileError;
+   const paths=(files||[]).map(file=>file.storage_path);
+   if(paths.length){const {error:storageError}=await supabase.storage.from("studiodesk-files").remove(paths);if(storageError)throw storageError}
+   const {error:deleteError}=await supabase.from("projects").delete().eq("id",project.id).eq("workspace_id",workspace);
+   if(deleteError)throw deleteError;
+   setRows(current=>current.filter(row=>row.id!==project.id));
+   void recordActivity("project_deleted","project",project.id,"Deleted project: "+project.name);
+  }catch(e){setError(e instanceof Error?e.message:"Could not delete project.")}finally{setBusy(false)}
+ }
+
  const filtered=useMemo(()=>rows.filter(p=>(filter==="all"||p.status===filter)&&(p.name+" "+(p.description||"")).toLowerCase().includes(query.toLowerCase())),[rows,filter,query]);
  const active=rows.filter(p=>p.status!=="completed").length;
  return <div className="page"><Header tag="MAKE THE WORK VISIBLE" title="Projects" desc="Every project has its own home for the brief, decisions and day-to-day work." action={<button className="button" onClick={()=>setShow(true)}><Plus size={16}/> New project</button>}/>{error&&<div className="notice">{error}</div>}
  <div className="stats project-stats"><div className="stat"><span><FolderKanban size={17}/></span><small>All projects</small><b>{rows.length}</b><i>Across your studio</i></div><div className="stat"><span><ArrowUpRight size={17}/></span><small>In motion</small><b>{active}</b><i>Not yet completed</i></div><div className="stat"><span><CheckCircle2Icon/></span><small>Completed</small><b>{rows.filter(p=>p.status==="completed").length}</b><i>Work delivered</i></div></div>
  <div className="toolbar"><Search size={16}/><input placeholder="Search projects…" value={query} onChange={e=>setQuery(e.target.value)}/><select value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">All statuses</option>{statuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select></div>
- <div className="cards">{filtered.map(p=><article className="client project-card" key={p.id}><div className="project-card-top"><b className="letter big">{p.name.slice(0,1).toUpperCase()}</b><span className="statuspill">{p.status.replace("_"," ")}</span></div><h3>{p.name}</h3><p>{p.description||"No project description yet."}</p><div className="projectmeta"><CalendarDays size={13}/>{p.due_date?new Date(p.due_date+"T00:00:00").toLocaleDateString():"No due date"}<span className="project-client">{clients.find(c=>c.id===p.client_id)?.name||"Independent"}</span></div><label className="statuslabel">Update status<select value={p.status} onChange={e=>changeStatus(p.id,e.target.value)}>{statuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select></label><Link className="project-open-link" href={"/projects/"+p.id}>Open project workspace <ArrowUpRight size={15}/></Link></article>)}</div>
+ <div className="cards">{filtered.map(p=><article className="client project-card" key={p.id}><div className="project-card-top"><b className="letter big">{p.name.slice(0,1).toUpperCase()}</b><div className="project-card-actions"><span className="statuspill">{p.status.replace("_"," ")}</span><button type="button" className="project-card-delete" disabled={busy} onClick={()=>void removeProject(p)} aria-label={"Delete "+p.name} title="Delete project"><Trash2 size={14}/></button></div></div><h3>{p.name}</h3><p>{p.description||"No project description yet."}</p><div className="projectmeta"><CalendarDays size={13}/>{p.due_date?new Date(p.due_date+"T00:00:00").toLocaleDateString():"No due date"}<span className="project-client">{clients.find(c=>c.id===p.client_id)?.name||"Independent"}</span></div><label className="statuslabel">Update status<select value={p.status} onChange={e=>changeStatus(p.id,e.target.value)}>{statuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select></label><Link className="project-open-link" href={"/projects/"+p.id}>Open project workspace <ArrowUpRight size={15}/></Link></article>)}</div>
  {!filtered.length&&<div className="empty bigempty"><FolderKanban/><b>{rows.length?"No matching projects.":"Give your next idea a home."}</b><p>{rows.length?"Try another search or status.":"Create a project and keep its context in one place."}</p><button className="button" onClick={()=>setShow(true)}><Plus size={15}/> Create project</button></div>}
  {show&&<div className="overlay"><div className="modal"><div className="modalhead"><h2>Create a project</h2><button onClick={()=>setShow(false)} aria-label="Close"><X/></button></div><form onSubmit={add}><label>Project name<input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} placeholder="e.g. Aurea brand identity"/></label><label>Project brief<textarea rows={4} value={description} onChange={e=>setDescription(e.target.value)} placeholder="What are you creating? Include goals, scope and intended outcome."/></label><label>Client<select value={clientId} onChange={e=>setClientId(e.target.value)}><option value="">Independent / no client</option>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label>Status<select value={status} onChange={e=>setStatus(e.target.value)}>{statuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select></label><label>Target date<input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label><button className="button" disabled={busy}>{busy?"Creating…":"Create project"}</button></form></div></div>}</div>;
 }
