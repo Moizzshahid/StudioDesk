@@ -4,8 +4,25 @@ Notable user-facing changes to StudioDesk are documented here. Dates use YYYY-MM
 
 ## Unreleased
 
-- Documentation and public-repository polish.
-- Live demo link and clearer self-hosting/security guidance.
+## [2.1.0] — 2026-11-19
+
+### Added
+- Studio Memory: human-authored, searchable knowledge records for client preferences, brand guidelines, decisions, feedback, lessons, and meeting notes.
+- Client and project management, task tracking, project records, activity timeline, and workspace-wide search.
+- Private project attachments with workspace-aware access controls and retryable storage cleanup.
+- Signup-time workspace provisioning and PostgreSQL Row Level Security for tenant-scoped data.
+- Updated public documentation, live demo link, contribution guidance, and security reporting policy.
+
+### Improved
+- Dashboard workspace-wide counts and project detail editing.
+- Authentication and application shell experience.
+- Deterministic dependency installation with npm lockfile v3 and npm ci in CI.
+- Documentation for setup, migrations, deployment, architecture, and roadmap.
+
+### Verification
+- Maintainer-reported manual browser workflows and workspace-isolation checks passed on 2026-11-19.
+- GitHub Actions typecheck and production build passed for the release preparation baseline.
+- No independent security audit is claimed; automated end-to-end regression coverage remains planned.
 
 ## 2026-11-19 — Project foundation verified
 
