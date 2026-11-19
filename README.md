@@ -85,7 +85,7 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-all 12 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0012_project_folders.sql`
+all 13 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0012_project_folders.sql`
 
 Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, retryable storage cleanup, and project folder categories. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
 
