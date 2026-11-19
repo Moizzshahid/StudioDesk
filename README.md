@@ -4,7 +4,7 @@
 
 **Plan the work. Care for the relationships. Keep the thinking behind every decision.**
 
-[![CI](https://github.com/Moizzshahid/studioDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/Moizzshahid/studioDesk/actions/workflows/ci.yml)
+[![CI](https://github.com/Moizzshahid/studioDesk/actions/workflows/ci.yml/badge.svg)](https://github.com/Moizzshahid/studioDesk/actions/workflows/ci.yml) [![Live demo](https://img.shields.io/badge/Live%20demo-Visit%20StudioDesk-111827?logo=vercel)](https://studiodesk-delta.vercel.app)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=nextdotjs)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -59,7 +59,7 @@ Capture client preferences, brand guidelines, creative decisions, feedback, meet
 ```bash
 git clone https://github.com/Moizzshahid/studioDesk.git
 cd studioDesk
-npm install
+npm ci
 ```
 
 ### 2. Configure environment
@@ -105,6 +105,10 @@ npm run start
 
 Set the same two public environment variables in your deployment provider and configure the production URL in Supabase Auth's allowed redirect/site URL settings.
 
+## Live demo
+
+Try the deployed application: **[studiodesk-delta.vercel.app](https://studiodesk-delta.vercel.app)**. The demo is a live deployment of this repository; it is not a separate downloadable product. Do not enter sensitive or real client information into a demo environment.
+
 ## Deployment
 
 See [Deployment guide](docs/DEPLOYMENT.md) for the Vercel + Supabase production setup checklist, required environment variables, Auth URL configuration, and post-deploy smoke tests.
@@ -136,16 +140,18 @@ studioDesk/
 └── README.md
 ```
 
-## Security notes
+## Security and verification notes
 
-This is an early-stage self-hosted foundation, not an independently audited production SaaS. Before using real client data:
+StudioDesk is an early-stage self-hostable application, not an independently audited production SaaS. The maintainer completed the documented manual browser workflows and workspace-isolation checks on the deployed application on 2026-11-19. These checks are useful validation, but they are not an independent security audit or a substitute for ongoing regression testing.
 
-- Test workspace isolation with at least two independent accounts.
+Before deploying your own instance or inviting a team:
+
+- Re-run workspace isolation checks with at least two independent accounts after security-sensitive changes.
 - Review every RLS policy and relational constraint.
 - Keep service-role credentials server-side and out of browser bundles.
 - Configure production auth URLs, backups, monitoring, and incident procedures.
 - Run the documented authenticated smoke tests and two-account tenant-isolation checks before inviting a team.
-- Configure leaked-password protection in Supabase Auth and review current Security Advisor findings.
+- Leaked-password protection is currently a known deferred item for the maintainer's deployment because enabling it may require a paid Supabase plan. Enable it where available and review current Security Advisor findings.
 - Keep a tested backup and recovery procedure; confirm pending storage cleanup jobs are empty.
 - Do not store passwords, payment details, or highly sensitive personal data in Studio Memory.
 
