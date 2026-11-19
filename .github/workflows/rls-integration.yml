@@ -1,0 +1,35 @@
+name: Workspace RLS integration
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  workspace-isolation:
+    name: Two-account workspace isolation
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY }}
+      TEST_USER_A_EMAIL: ${{ secrets.TEST_USER_A_EMAIL }}
+      TEST_USER_A_PASSWORD: ${{ secrets.TEST_USER_A_PASSWORD }}
+      TEST_USER_B_EMAIL: ${{ secrets.TEST_USER_B_EMAIL }}
+      TEST_USER_B_PASSWORD: ${{ secrets.TEST_USER_B_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify integration-test credentials are configured
+        run: |
+          for key in SUPABASE_URL SUPABASE_ANON_KEY TEST_USER_A_EMAIL TEST_USER_A_PASSWORD TEST_USER_B_EMAIL TEST_USER_B_PASSWORD; do
+            if [ -z "${!key}" ]; then echo "::error::Missing repository secret: $key"; exit 1; fi
+          done
+      - name: Run two-account RLS regression
+        run: node scripts/test-workspace-isolation.mjs
