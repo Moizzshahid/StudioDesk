@@ -114,6 +114,8 @@ export default function StudioMemory() {
       setProjects((projectResult.data ?? []) as RelatedOption[]);
       setClients((clientResult.data ?? []) as RelatedOption[]);
       setFolders((folderResult.data ?? []) as RelatedOption[]);
+      const folderParam = new URLSearchParams(window.location.search).get("folderId");
+      if (folderParam) setForm((current) => ({ ...current, folder_id: folderParam }));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load Studio Memory.");
     } finally {
