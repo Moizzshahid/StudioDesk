@@ -4,6 +4,8 @@ Notable user-facing changes to StudioDesk are documented here. Dates use YYYY-MM
 
 ## Unreleased
 
+The folder-workspace release is merged into `main` and deployed to production, but has not yet been assigned a version tag or published as a GitHub Release.
+
 - Company/client folders as complete workspaces for projects, shared notes, documents, and Studio Memory.
 - Projects can be assigned to a company folder or remain independent without a folder.
 
