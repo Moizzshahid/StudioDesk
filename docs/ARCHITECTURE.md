@@ -33,7 +33,7 @@ The Studio Memory route (`app/(app)/memory/page.tsx`) provides workspace-scoped 
 This is an early-stage, client-heavy multi-tenant application, not a security-certified service. RLS is essential and must remain enabled. Continue strengthening server-side input validation, reviewing cross-tenant foreign-key relationships, adding automated authorization tests, and establishing operational controls. Manual workspace-isolation checks have been reported as passing; repeat them after authorization or schema changes. Do not add privileged service-role credentials to browser code.
 
 ## Database changes
-1. Add a new, ordered SQL migration under `supabase/migrations/` (company/client folder workspaces are introduced in migration `0012_project_folders.sql`).
+1. Add a new, ordered SQL migration under `supabase/migrations/` (company/client folder workspaces are introduced in migration `0012_project_folders.sql`; supporting relationship indexes are in `0013_folder_workspace_indexes.sql`).
 2. Keep existing migrations immutable once shared with other environments.
 3. Test the migration against a disposable Supabase project.
 4. Test access as a member and as a user from another workspace.
