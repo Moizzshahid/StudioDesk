@@ -93,6 +93,7 @@ export default function StudioMemory() {
           .from("projects")
           .select("id,name")
           .eq("workspace_id", workspace)
+          .is("folder_id", null)
           .order("name"),
         supabase
           .from("clients")
