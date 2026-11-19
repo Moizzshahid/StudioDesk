@@ -33,7 +33,6 @@ type Memory = {
   category: Category;
   project_id: string | null;
   client_id: string | null;
-  folder_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -44,7 +43,6 @@ type MemoryForm = {
   category: Category;
   project_id: string;
   client_id: string;
-  folder_id: string;
 };
 
 const emptyForm: MemoryForm = {
@@ -53,7 +51,6 @@ const emptyForm: MemoryForm = {
   category: "other",
   project_id: "",
   client_id: "",
-  folder_id: "",
 };
 
 function categoryLabel(value: Category) {
@@ -72,7 +69,6 @@ export default function StudioMemory() {
   const [rows, setRows] = useState<Memory[]>([]);
   const [projects, setProjects] = useState<RelatedOption[]>([]);
   const [clients, setClients] = useState<RelatedOption[]>([]);
-  const [folders, setFolders] = useState<RelatedOption[]>([]);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -86,11 +82,12 @@ export default function StudioMemory() {
     setError("");
     try {
       const workspace = await getWorkspaceId();
-      const [memoryResult, projectResult, clientResult, folderResult] = await Promise.all([
+      const [memoryResult, projectResult, clientResult] = await Promise.all([
         supabase
           .from("memories")
           .select("id,title,content,category,project_id,client_id,folder_id,created_at,updated_at")
           .eq("workspace_id", workspace)
+          .is("folder_id", null)
           .order("updated_at", { ascending: false }),
         supabase
           .from("projects")
@@ -102,20 +99,15 @@ export default function StudioMemory() {
           .select("id,name")
           .eq("workspace_id", workspace)
           .order("name"),
-        supabase.from("folders").select("id,name").eq("workspace_id", workspace).order("name"),
       ]);
 
       if (memoryResult.error) throw memoryResult.error;
       if (projectResult.error) throw projectResult.error;
       if (clientResult.error) throw clientResult.error;
-      if (folderResult.error) throw folderResult.error;
 
       setRows((memoryResult.data ?? []) as Memory[]);
       setProjects((projectResult.data ?? []) as RelatedOption[]);
       setClients((clientResult.data ?? []) as RelatedOption[]);
-      setFolders((folderResult.data ?? []) as RelatedOption[]);
-      const folderParam = new URLSearchParams(window.location.search).get("folderId");
-      if (folderParam) setForm((current) => ({ ...current, folder_id: folderParam }));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load Studio Memory.");
     } finally {
@@ -141,8 +133,7 @@ export default function StudioMemory() {
 
   function openCreate() {
     setEditingId(null);
-    const folderId = new URLSearchParams(window.location.search).get("folderId") || "";
-    setForm({ ...emptyForm, folder_id: folders.some((folder) => folder.id === folderId) ? folderId : "" });
+    setForm(emptyForm);
     setError("");
     setShowForm(true);
   }
@@ -155,7 +146,6 @@ export default function StudioMemory() {
       category: memory.category,
       project_id: memory.project_id ?? "",
       client_id: memory.client_id ?? "",
-      folder_id: memory.folder_id ?? "",
     });
     setError("");
     setShowForm(true);
@@ -188,7 +178,6 @@ export default function StudioMemory() {
         category: form.category,
         project_id: form.project_id || null,
         client_id: form.client_id || null,
-        folder_id: form.folder_id || null,
       };
 
       const result = editingId
@@ -297,7 +286,6 @@ export default function StudioMemory() {
           {filtered.map((memory) => {
             const project = projectName(memory.project_id);
             const client = clientName(memory.client_id);
-            const folder = folders.find((item) => item.id === memory.folder_id)?.name;
             return (
               <article className="memory" key={memory.id}>
                 <div className="memorytop">
@@ -313,11 +301,10 @@ export default function StudioMemory() {
                 </div>
                 <h3>{memory.title}</h3>
                 <p>{memory.content}</p>
-                {(project || client || folder) && (
+                {(project || client) && (
                   <div className="memoryrelations">
                     {project && <span>Project: {project}</span>}
                     {client && <span>Client: {client}</span>}
-                    {folder && <span>Folder: {folder}</span>}
                   </div>
                 )}
                 <small>Updated {formatDate(memory.updated_at || memory.created_at)}</small>
@@ -404,7 +391,6 @@ export default function StudioMemory() {
                   {clients.map((client) => <option key={client.id} value={client.id}>{client.name}</option>)}
                 </select>
               </label>
-              <label>Related company folder <span className="privacy">Optional</span><select value={form.folder_id} onChange={(event) => setForm({ ...form, folder_id: event.target.value })}><option value="">No folder</option>{folders.map((folder) => <option key={folder.id} value={folder.id}>{folder.name}</option>)}</select></label>
               <p className="privacy">Studio Memory is human-curated. Do not save passwords, payment details, or highly sensitive personal information.</p>
               <button className="button" disabled={busy}>
                 {busy ? "Saving…" : editingId ? "Save changes" : "Save memory"}
