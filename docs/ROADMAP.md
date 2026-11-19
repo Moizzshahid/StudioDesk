@@ -2,6 +2,13 @@
 
 This roadmap distinguishes shipped capabilities from planned work. Scope may change as StudioDesk is tested in real studio workflows.
 
+## In development — company workspaces
+
+- Company profiles for ongoing client organizations.
+- Company folders for recurring work and project grouping.
+- Company- and folder-level notes, records, and private documents.
+- Project association with a company and optional folder, while preserving independent projects and existing client contacts.
+
 ## Shipped foundation
 
 Implemented in the current application codebase:
