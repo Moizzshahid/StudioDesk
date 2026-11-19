@@ -46,6 +46,6 @@ Use a test account and non-sensitive sample data:
 
 ## 4. Production readiness
 
-CI verifies TypeScript and the Next.js production build; this does not prove authenticated workflows. Before real client data is stored, complete every smoke test above with two independent accounts, verify cross-workspace reads/writes are denied, confirm private file access, configure backups/monitoring, enable leaked-password protection, and review all Security Advisor findings. Treat the app as pre-production until those checks pass.
+CI verifies TypeScript and the Next.js production build; this does not prove authenticated workflows. Before real client data is stored, complete every smoke test above with two independent accounts, verify cross-workspace reads/writes are denied, confirm private file access, configure backups/monitoring and review all Security Advisor findings. Leaked-password protection is a known deferred item for this deployment; enable it when the available plan supports it. Treat the app as pre-production until those checks pass.
 
 Never commit `.env.local`, real client data, access tokens, or service-role credentials.
