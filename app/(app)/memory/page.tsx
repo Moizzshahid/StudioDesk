@@ -141,7 +141,8 @@ export default function StudioMemory() {
 
   function openCreate() {
     setEditingId(null);
-    setForm(emptyForm);
+    const folderId = new URLSearchParams(window.location.search).get("folderId") || "";
+    setForm({ ...emptyForm, folder_id: folders.some((folder) => folder.id === folderId) ? folderId : "" });
     setError("");
     setShowForm(true);
   }
