@@ -5,7 +5,7 @@ StudioDesk is a Next.js application backed by Supabase. A successful GitHub buil
 ## 1. Prepare Supabase
 
 1. Create a Supabase project.
-2. For a new, empty project, apply every SQL file in `supabase/migrations/` in filename order (all 11 SQL files, `0001` through `0010`, including the separately named `0002b` migration). Never replay these initial migrations over a populated database. For an existing project, compare `supabase_migrations.schema_migrations` with the repository before applying anything.
+2. For a new, empty project, apply every SQL file in `supabase/migrations/` in filename order (all 12 SQL files, `0001` through `0011`, including the separately named `0002b` migration). Never replay these initial migrations over a populated database. For an existing project, compare `supabase_migrations.schema_migrations` with the repository before applying anything.
 3. In **Authentication → Providers**, enable Email/password sign-in.
 4. Decide whether email confirmation is required. If enabled, configure the email provider and test the confirmation email.
 5. In **Authentication → URL Configuration**, set the production Site URL to the final Vercel domain and add the local development URL plus any preview URLs you intend to use.
@@ -38,7 +38,11 @@ Use a test account and non-sensitive sample data:
 - [ ] A client can be created, searched, edited, and deleted.
 - [ ] A project can be created, edited, assigned to a client, and its status changed.
 - [ ] Project deletion removes database records and private files; simulate a Storage failure and verify the cleanup job remains retryable.
-- [ ] Attachment upload, download, deletion, and workspace/project folder authorization work.
+- [ ] Project attachment upload, download, deletion, and workspace/project authorization work.
+- [ ] Company creation, editing, folder creation/editing/deletion, and project association work.
+- [ ] Company- and folder-level notes and private document upload/download/deletion work.
+- [ ] A project can remain independent, belong to a company, or belong to a company folder.
+- [ ] Company/folder deletion preserves linked projects and removes queued private files.
 - [ ] Tasks can be created, completed, reopened, and deleted.
 - [ ] Studio Memory can be created, searched, edited, filtered, and deleted.
 - [ ] Sign out returns the user to Login.
