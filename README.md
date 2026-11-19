@@ -96,7 +96,7 @@ StudioDesk uses workspace-scoped PostgreSQL RLS as its tenant boundary. RLS is e
 
 The maintainer reports completing manual browser CRUD and two-account workspace-isolation checks on 2026-11-19. Those are maintainer-reported checks, not an independent security audit or an automated end-to-end test suite. File upload/download/deletion and retryable cleanup must be rechecked against a disposable test workspace before relying on them with real client files.
 
-See [SECURITY.md](SECURITY.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), and the [manual verification checklist](docs/TESTING.md).
+See [SECURITY.md](SECURITY.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md), and the [manual verification checklist](docs/TESTING.md). A two-account RLS regression script is available as `npm run test:rls`; run it only against a disposable Supabase project with two dedicated test accounts. Configure the six `TEST_*` / `SUPABASE_*` repository secrets listed in [the integration workflow](.github/workflows/rls-integration.yml) before running that workflow.
 
 ## Development
 
