@@ -25,12 +25,12 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Authentication | Email/password sign-up and sign-in with Supabase Auth |
 | Workspace | Signup-time personal workspace provisioning |
 | Overview | Recent projects and tasks, exact workspace-wide open counts, clients, memories, and activity |
-| Projects | Create, search, filter, edit details, set due dates, update status, delete with retryable document cleanup |
+| Projects | Create independent or company-linked projects, optionally inside a company folder; manage briefs, status, due dates, tasks and private project files |
 | Tasks | Create, edit, search, filter, assign project, set priority/due date, complete/reopen/delete |
-| Clients | Create, search, edit, and delete contact records and internal notes |
+| Companies | Create and manage company profiles, contacts, shared context, and ongoing client relationships |\n| Company folders | Organize recurring company work into folders with their own notes, documents, and linked projects |\n| Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
-| Documents | Private project attachments with workspace/project-scoped storage access and retryable cleanup queue |
+| Documents | Private project and company/folder attachments with workspace-scoped access and retryable cleanup queue |
 | Activity | Workspace-scoped activity timeline for project, task, memory and document actions |
 | Interface | Responsive dashboard, navigation, forms, command search, and empty states |
 
@@ -83,9 +83,9 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-all 11 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql` and `0010_restore_svg_document_support.sql`
+all 12 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0011_company_folder_management.sql`
 
-Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, and retryable storage cleanup. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
+Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, retryable storage cleanup, and company/folder workspaces. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
 
 ### 4. Start the application
 
