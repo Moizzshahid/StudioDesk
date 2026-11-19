@@ -25,10 +25,10 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Authentication | Email/password sign-up and sign-in with Supabase Auth |
 | Workspace | Signup-time personal workspace provisioning |
 | Overview | Recent projects and tasks, exact workspace-wide open counts, clients, memories, and activity |
-| Projects | Create independent or company-linked projects, optionally inside a company folder; manage briefs, status, due dates, tasks and private project files |
+| Projects | Create projects and optionally organize them inside a folder; manage briefs, status, due dates, tasks and private project files |
 | Tasks | Create, edit, search, filter, assign project, set priority/due date, complete/reopen/delete |
-| Companies | Create and manage company profiles, contacts, shared context, and ongoing client relationships |
-| Company folders | Organize recurring company work into folders with their own notes, documents, and linked projects |
+| Folders | Create project categories such as branding, websites, and campaigns; organize projects inside folders |
+
 | Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
@@ -85,9 +85,9 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-all 12 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0011_company_folder_management.sql`
+all 13 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0012_project_folders.sql`
 
-Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, retryable storage cleanup, and company/folder workspaces. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
+Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, retryable storage cleanup, and project folder categories. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
 
 ### 4. Start the application
 
