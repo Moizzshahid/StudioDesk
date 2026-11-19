@@ -9,13 +9,18 @@ Implemented in the current application codebase:
 - Email/password authentication through Supabase Auth.
 - Signup-time workspace provisioning and workspace-scoped PostgreSQL RLS.
 - Dashboard with recent work, exact workspace-wide counts, and activity.
-- Client directory with create, search, edit, and delete.\n- Company profiles for ongoing client organizations, with contact details and shared context.\n- Company folders to group recurring work by brand, campaign, service, or year.\n- Company- and folder-level notes, records, and private documents.\n- Projects linked to a company and optionally to one of its folders, while retaining independent projects and existing client contacts.
+- Client directory with create, search, edit, and delete.
+- Company profiles for ongoing client organizations, with contact details and shared context.
+- Company folders to group recurring work by brand, campaign, service, or year.
+- Company- and folder-level notes, records, and private documents.
+- Projects linked to a company and optionally to one of its folders, while retaining independent projects and existing client contacts.
 - Projects with create, search, filtering, status, due dates, client association, editing, and deletion.
 - Project records for briefs, notes, decisions, meetings, links, deliverables, and updates.
 - Tasks with project association, priority, due dates, editing, completion, reopening, and deletion.
 - Human-authored Studio Memory with categories, search, filters, editing, and optional project/client associations.
 - Workspace search and activity timeline.
-- Private project attachments with workspace/project authorization and retryable Storage cleanup.\n- Private company and folder attachments with workspace-scoped Storage authorization and cleanup-queue deletion.
+- Private project attachments with workspace/project authorization and retryable Storage cleanup.
+- Private company and folder attachments with workspace-scoped Storage authorization and cleanup-queue deletion.
 - Responsive application shell and authentication screens.
 - GitHub Actions CI, npm lockfile, Dependabot, issue templates, and contribution guidance.
 
