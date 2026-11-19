@@ -1,7 +1,7 @@
 # Security policy
 
 ## Supported version
-The `main` branch is the only development line currently maintained. No stable production release has been declared.
+The `main` branch is the only development line currently maintained. The application is deployed to production on Vercel, but no tagged GitHub Release is currently published. Until a tagged release is published, use the current `main` branch as the maintained version.
 
 ## Reporting a vulnerability
 
