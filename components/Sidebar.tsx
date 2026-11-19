@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Activity, BrainCircuit, FolderKanban, LayoutDashboard, LogOut, ListTodo, Users,
+  Activity, BrainCircuit, Building2, FolderKanban, LayoutDashboard, LogOut, ListTodo, Users,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const links = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
+  { href: "/companies", label: "Companies", icon: Building2 },
   { href: "/tasks", label: "Tasks", icon: ListTodo },
   { href: "/clients", label: "Clients", icon: Users },
   { href: "/memory", label: "Studio Memory", icon: BrainCircuit },
