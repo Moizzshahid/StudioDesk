@@ -2,12 +2,10 @@
 
 This roadmap distinguishes shipped capabilities from planned work. Scope may change as StudioDesk is tested in real studio workflows.
 
-## In development — company workspaces
+## In development — project organization
 
-- Company profiles for ongoing client organizations.
-- Company folders for recurring work and project grouping.
-- Company- and folder-level notes, records, and private documents.
-- Project association with a company and optional folder, while preserving independent projects and existing client contacts.
+- Workspace-wide folders to categorize projects by service, type, campaign, or client.
+- Move projects between folders without changing their project records, tasks, or attachments.
 
 ## Shipped foundation
 
@@ -17,17 +15,17 @@ Implemented in the current application codebase:
 - Signup-time workspace provisioning and workspace-scoped PostgreSQL RLS.
 - Dashboard with recent work, exact workspace-wide counts, and activity.
 - Client directory with create, search, edit, and delete.
-- Company profiles for ongoing client organizations, with contact details and shared context.
-- Company folders to group recurring work by brand, campaign, service, or year.
-- Company- and folder-level notes, records, and private documents.
-- Projects linked to a company and optionally to one of its folders, while retaining independent projects and existing client contacts.
+- 
+- 
+- 
+- Project folders for organizing projects by category, service, or campaign.
 - Projects with create, search, filtering, status, due dates, client association, editing, and deletion.
 - Project records for briefs, notes, decisions, meetings, links, deliverables, and updates.
 - Tasks with project association, priority, due dates, editing, completion, reopening, and deletion.
 - Human-authored Studio Memory with categories, search, filters, editing, and optional project/client associations.
 - Workspace search and activity timeline.
 - Private project attachments with workspace/project authorization and retryable Storage cleanup.
-- Private company and folder attachments with workspace-scoped Storage authorization and cleanup-queue deletion.
+- 
 - Responsive application shell and authentication screens.
 - GitHub Actions CI, npm lockfile, Dependabot, issue templates, and contribution guidance.
 
