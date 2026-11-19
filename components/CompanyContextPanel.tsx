@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { FileText, Link2, Plus, Trash2, Upload, Download, X, Pencil, RefreshCw } from "lucide-react";
+import { FileText, Link2, Plus, Trash2, Upload, Download, X, Pencil } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { enqueueStorageCleanup, processStorageCleanup } from "@/lib/storageCleanup";
 
