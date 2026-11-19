@@ -4,8 +4,8 @@ Notable user-facing changes to StudioDesk are documented here. Dates use YYYY-MM
 
 ## Unreleased
 
-- Workspace-wide project folders for organizing work by category, service, or campaign.
-- Projects can be assigned to a folder, moved between folders, or left unfiled.
+- Company/client folders as complete workspaces for projects, shared notes, documents, and Studio Memory.
+- Projects can be assigned to a company folder or remain independent without a folder.
 
 ## [2.1.0] — 2026-11-19
 
