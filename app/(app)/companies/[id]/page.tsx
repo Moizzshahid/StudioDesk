@@ -17,7 +17,21 @@ export default function CompanyDetail(){
  useEffect(()=>{void load()},[load]);
  async function createFolder(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");try{const user=(await supabase.auth.getUser()).data.user;if(!user)throw new Error("Please sign in again.");const {error}=await supabase.from("company_folders").insert({workspace_id:workspace,company_id:id,name:folderName.trim(),description:folderDescription.trim()||null,color:folderColor,created_by:user.id,sort_order:folders.length});if(error)throw error;setShowFolder(false);setFolderName("");setFolderDescription("");await load()}catch(e){setError(e instanceof Error?e.message:"Could not create folder.")}finally{setBusy(false)}}
  async function saveCompany(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError("");try{const {error}=await supabase.from("companies").update({...form,name:form.name.trim()}).eq("id",id).eq("workspace_id",workspace);if(error)throw error;setEditing(false);await load()}catch(e){setError(e instanceof Error?e.message:"Could not save company.")}finally{setBusy(false)}}
- async function deleteCompany(){if(!company||!window.confirm("Delete "+company.name+"? Company folders, company notes and company documents will be removed. Linked projects will remain as independent projects."))return;setBusy(true);setError("");try{const {data:files,error:readError}=await supabase.from("company_attachments").select("storage_path").eq("company_id",id).eq("workspace_id",workspace);if(readError)throw readError;const paths=(files||[]).map(f=>f.storage_path);const user=(await supabase.auth.getUser()).data.user;if(paths.length){if(!user)throw new Error("Please sign in again.");const job=await enqueueStorageCleanup(workspace,paths,user.id);const {error}=await supabase.from("companies").delete().eq("id",id).eq("workspace_id",workspace);if(error){if(job)await supabase.from("storage_cleanup_jobs").delete().eq("id",job).eq("workspace_id",workspace);throw error}if(job)await processStorageCleanup(job,workspace);window.location.assign("/companies")}catch(e){setError(e instanceof Error?e.message:"Could not delete company.")}finally{setBusy(false)}}
+ async function deleteCompany(){
+  if(!company||!window.confirm("Delete "+company.name+"? Company folders, company notes and company documents will be removed. Linked projects will remain as independent projects."))return;
+  setBusy(true);setError("");let jobId:string|null=null;
+  try{
+   const {data:files,error:readError}=await supabase.from("company_attachments").select("storage_path").eq("company_id",id).eq("workspace_id",workspace);
+   if(readError)throw readError;
+   const paths=(files||[]).map(f=>f.storage_path);
+   const user=(await supabase.auth.getUser()).data.user;
+   if(paths.length){if(!user)throw new Error("Please sign in again.");jobId=await enqueueStorageCleanup(workspace,paths,user.id)}
+   const {error:deleteError}=await supabase.from("companies").delete().eq("id",id).eq("workspace_id",workspace);
+   if(deleteError){if(jobId)await supabase.from("storage_cleanup_jobs").delete().eq("id",jobId).eq("workspace_id",workspace);throw deleteError}
+   if(jobId)await processStorageCleanup(jobId,workspace);
+   window.location.assign("/companies");
+  }catch(e){setError(e instanceof Error?e.message:"Could not delete company. If file cleanup is pending, retry it from Projects.")}finally{setBusy(false)}
+ }
  if(loading)return <div className="page"><div className="empty bigempty">Loading company workspace…</div></div>;
  if(!company)return <div className="page"><Link className="backlink" href="/companies"><ArrowLeft size={15}/> Companies</Link><div className="notice">{error||"Company not found."}</div></div>;
  return <div className="page"><Link className="backlink" href="/companies"><ArrowLeft size={15}/> All companies</Link><Header tag="COMPANY WORKSPACE" title={company.name} desc={company.description||"A dedicated home for this relationship, its folders and ongoing work."} action={<div className="project-actions"><button className="button button-light" onClick={()=>setEditing(true)}><Pencil size={14}/> Edit company</button><button className="button" onClick={()=>setShowFolder(true)}><FolderPlus size={14}/> New folder</button></div>}/>{error&&<div className="notice" role="alert">{error}</div>}
