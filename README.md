@@ -32,7 +32,7 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
-| Documents | Private project and company/folder attachments with workspace-scoped access and retryable cleanup queue |
+| Documents | Private project attachments with workspace-scoped access and retryable cleanup queue |
 | Activity | Workspace-scoped activity timeline for project, task, memory and document actions |
 | Interface | Responsive dashboard, navigation, forms, command search, and empty states |
 
@@ -85,7 +85,7 @@ Never expose a Supabase service-role key in browser code or a `NEXT_PUBLIC_*` va
 
 In your Supabase project's SQL Editor, run:
 
-all 13 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0012_project_folders.sql`
+all 12 SQL files in `supabase/migrations/` in lexical filename order, including `0002b_move_security_helpers_to_private_schema.sql`, `0010_restore_svg_document_support.sql`, and `0012_project_folders.sql`
 
 Do not apply only the first two files: later migrations add project records, activity writes, private documents, production hardening, retryable storage cleanup, and project folder categories. For an existing production project, compare `supabase_migrations.schema_migrations` with the repository before applying anything. Never reset or replay the initial schema over a database that contains user data.
 
