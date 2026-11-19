@@ -2,11 +2,6 @@
 
 This roadmap distinguishes shipped capabilities from planned work. Scope may change as StudioDesk is tested in real studio workflows.
 
-## In development — company/client workspaces
-
-- Company-named folders that hold shared profile details, notes, documents, memories, and related projects.
-- Independent projects remain available without a folder or client contact.
-
 ## Shipped foundation
 
 Implemented in the current application codebase:
@@ -22,7 +17,6 @@ Implemented in the current application codebase:
 - Human-authored Studio Memory with categories, search, filters, editing, and optional project/client associations.
 - Workspace search and activity timeline.
 - Private project and folder attachments with workspace-scoped authorization and retryable Storage cleanup.
-- 
 - Responsive application shell and authentication screens.
 - GitHub Actions CI, npm lockfile, Dependabot, issue templates, and contribution guidance.
 
