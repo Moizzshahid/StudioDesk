@@ -5,7 +5,7 @@ StudioDesk is a Next.js application backed by Supabase. A successful GitHub buil
 ## 1. Prepare Supabase
 
 1. Create a Supabase project.
-2. For a new, empty project, apply every SQL file in `supabase/migrations/` in filename order (all 13 SQL files, `0001` through `0012`, including the separately named `0002b` migration). Never replay these initial migrations over a populated database. For an existing project, compare `supabase_migrations.schema_migrations` with the repository before applying anything.
+2. For a new, empty project, apply every SQL file in `supabase/migrations/` in filename order (all 14 SQL files, `0001` through `0013`, including the separately named `0002b` migration). Never replay these initial migrations over a populated database. For an existing project, compare `supabase_migrations.schema_migrations` with the repository before applying anything.
 3. In **Authentication → Providers**, enable Email/password sign-in.
 4. Decide whether email confirmation is required. If enabled, configure the email provider and test the confirmation email.
 5. In **Authentication → URL Configuration**, set the production Site URL to the final Vercel domain and add the local development URL plus any preview URLs you intend to use.
@@ -49,7 +49,7 @@ Use a test account and non-sensitive sample data:
 
 ## 4. Production readiness
 
-CI verifies TypeScript and the Next.js production build; it does not prove authenticated workflows. The maintainer reports that the documented manual browser workflows and workspace-isolation checks passed on the deployed application on 2026-11-19. Re-run these checks for each deployment that changes authentication, authorization, database schema, or Storage behavior.
+CI verifies TypeScript and the Next.js production build; it does not prove authenticated workflows. The maintainer reports that the documented manual browser workflows and workspace-isolation checks passed on the deployed application on 2026-11-19. The current production deployment is built from `main` at commit `01c2237`. Re-run these checks for each deployment that changes authentication, authorization, database schema, or Storage behavior.
 
 Before handling real client data in a self-hosted instance, configure backups and monitoring, review all Supabase Security Advisor findings, and confirm private file access and cleanup behavior. Leaked-password protection is a known deferred item for the maintainer's deployment; enable it when the available plan supports it. Manual testing is not an independent security audit.
 
