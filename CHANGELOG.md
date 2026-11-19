@@ -4,10 +4,7 @@ Notable user-facing changes to StudioDesk are documented here. Dates use YYYY-MM
 
 ## Unreleased
 
-The folder-workspace release is merged into `main` and deployed to production, but has not yet been assigned a version tag or published as a GitHub Release.
-
-- Company/client folders as complete workspaces for projects, shared notes, documents, and Studio Memory.
-- Projects can be assigned to a company folder or remain independent without a folder.
+No unreleased user-facing changes are currently recorded.
 
 ## [2.1.0] — 2026-11-19
 
@@ -16,6 +13,7 @@ The folder-workspace release is merged into `main` and deployed to production, b
 - Client and project management, task tracking, project records, activity timeline, and workspace-wide search.
 - Private project attachments with workspace-aware access controls and retryable storage cleanup.
 - Signup-time workspace provisioning and PostgreSQL Row Level Security for tenant-scoped data.
+- Company/client folders as complete workspaces for projects, shared notes, documents, and Studio Memory; projects can also remain independent.
 - Updated public documentation, live demo link, contribution guidance, and security reporting policy.
 
 ### Improved
@@ -26,7 +24,7 @@ The folder-workspace release is merged into `main` and deployed to production, b
 
 ### Verification
 - Maintainer-reported manual browser workflows and workspace-isolation checks passed on 2026-11-19.
-- GitHub Actions typecheck and production build passed for the release preparation baseline.
+- GitHub Actions CI is configured to run TypeScript validation and a production build on pushes and pull requests to `main`; consult the release commit's Checks tab for its actual result.
 - No independent security audit is claimed; automated end-to-end regression coverage remains planned.
 
 ## 2026-11-19 — Project foundation verified
@@ -56,4 +54,4 @@ The folder-workspace release is merged into `main` and deployed to production, b
 - Added GitHub Actions CI, Dependabot, issue templates, and pull-request template.
 - Added setup, architecture, deployment, security, contribution, and roadmap documentation.
 
-For implementation details, see the [project handoff](docs/PROJECT_HANDOFF.md) and [roadmap](docs/ROADMAP.md).
+For implementation details, see the [architecture overview](docs/ARCHITECTURE.md), [testing checklist](docs/TESTING.md), and [roadmap](docs/ROADMAP.md).

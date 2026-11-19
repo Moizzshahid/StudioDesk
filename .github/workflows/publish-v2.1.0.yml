@@ -1,0 +1,37 @@
+name: Publish StudioDesk v2.1.0 release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - CHANGELOG.md
+      - package.json
+      - package-lock.json
+      - .github/workflows/publish-v2.1.0.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Create v2.1.0 GitHub Release
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify package versions
+        run: |
+          node -e "const p=require('./package.json'); const l=require('./package-lock.json'); if(p.version !== '2.1.0' || l.version !== '2.1.0' || l.packages[''].version !== '2.1.0') process.exit(1)"
+      - name: Publish GitHub Release and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v2.1.0
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; nothing to do."
+          else
+            gh release create "$TAG" \
+              --title "StudioDesk v2.1.0" \
+              --generate-notes \
+              --target "$GITHUB_SHA"
+          fi
