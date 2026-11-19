@@ -27,12 +27,12 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Overview | Recent projects and tasks, exact workspace-wide open counts, clients, memories, and activity |
 | Projects | Create projects and optionally organize them inside a folder; manage briefs, status, due dates, tasks and private project files |
 | Tasks | Create, edit, search, filter, assign project, set priority/due date, complete/reopen/delete |
-| Folders | Create project categories such as branding, websites, and campaigns; organize projects inside folders |
+| Folders | Company/client workspaces with shared profile, notes, documents, Studio Memory, and linked projects; standalone projects remain supported |
 
 | Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
-| Documents | Private project attachments with workspace-scoped access and retryable cleanup queue |
+| Documents | Private project and folder attachments with workspace-scoped access and retryable cleanup queue |
 | Activity | Workspace-scoped activity timeline for project, task, memory and document actions |
 | Interface | Responsive dashboard, navigation, forms, command search, and empty states |
 
@@ -126,6 +126,7 @@ studioDesk/
 │   │   ├── dashboard/         # Workspace overview
 │   │   ├── memory/            # Human-curated Studio Memory (CRUD, search, filters)
 │   │   ├── projects/          # Project management and document cleanup retry
+│   │   ├── folders/           # Company/client workspaces
 │   │   ├── tasks/             # Task management
 │   │   └── layout.tsx         # Authenticated shell
 │   ├── login/                 # Sign-in and sign-up
