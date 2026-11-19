@@ -27,7 +27,9 @@ StudioDesk brings day-to-day studio operations together with a searchable, human
 | Overview | Recent projects and tasks, exact workspace-wide open counts, clients, memories, and activity |
 | Projects | Create independent or company-linked projects, optionally inside a company folder; manage briefs, status, due dates, tasks and private project files |
 | Tasks | Create, edit, search, filter, assign project, set priority/due date, complete/reopen/delete |
-| Companies | Create and manage company profiles, contacts, shared context, and ongoing client relationships |\n| Company folders | Organize recurring company work into folders with their own notes, documents, and linked projects |\n| Clients | Create, search, edit, and delete contact records and internal notes |
+| Companies | Create and manage company profiles, contacts, shared context, and ongoing client relationships |
+| Company folders | Organize recurring company work into folders with their own notes, documents, and linked projects |
+| Clients | Create, search, edit, and delete contact records and internal notes |
 | Studio Memory | Create, edit, search, filter, and delete human-authored context; optionally associate a project or client |
 | Data access | Workspace-scoped PostgreSQL Row Level Security policies |
 | Documents | Private project and company/folder attachments with workspace-scoped access and retryable cleanup queue |
