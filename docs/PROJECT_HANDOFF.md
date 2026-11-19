@@ -98,7 +98,7 @@ Runtime / package setup:
 - PR #12: project detail and project record editing (merged).
 - PR #14: production-readiness / Storage cleanup and security hardening (merged).
 - PR #15: SVG document support alignment (merged).
-- Active lockfile work: branch fix/npm-lockfile. At the time this file was created, PR had not yet been created; check current state.
+- Lockfile work is submitted as PR #16: https://github.com/Moizzshahid/studioDesk/pull/16. It includes package-lock.json, npm ci CI, deployment-doc corrections, and this handoff. PR CI completed successfully (npm ci, TypeScript check, and production build). Confirm PR merge state and main deployment before assuming it is live.
 
 ### Supabase
 - Project name: StudioDesk
@@ -466,11 +466,11 @@ User asked to defer leaked-password protection, fix missing lockfile, and create
    - now refers to all 11 migration files, including 0002b and 0010.
    - fixed malformed literal newline sequences in project deletion and attachment checklist.
 7. Active branch: fix/npm-lockfile.
-8. Latest observed branch head after sequential changes: a982ef819fafe3ac83bc981114769d0831d4c5a4 before this handoff file is committed.
-9. PR for lockfile work has not yet been created at the time of this document.
-10. CI for updated npm ci workflow has not yet been observed passing. Must wait for it and inspect jobs.
+8. PR #16 is open at https://github.com/Moizzshahid/studioDesk/pull/16.
+9. GitHub Actions run 44524019663 passed on the PR head: npm ci, TypeScript check, and Next.js production build all passed.
+10. The one-time lockfile generator workflow was removed; only ci.yml remains.
 11. No production DB change is needed for lockfile.
-12. No production deployment should be required for this package/CI/docs-only change, but merge to main will trigger normal Vercel Git deployment.
+12. Merge to main triggers the normal Vercel Git deployment; verify it after merge.
 
 ### Exact next steps
 1. Refresh branch head for fix/npm-lockfile.
