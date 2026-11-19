@@ -2,10 +2,10 @@
 
 This roadmap distinguishes shipped capabilities from planned work. Scope may change as StudioDesk is tested in real studio workflows.
 
-## In development — project organization
+## In development — company/client workspaces
 
-- Workspace-wide folders to categorize projects by service, type, campaign, or client.
-- Move projects between folders without changing their project records, tasks, or attachments.
+- Company-named folders that hold shared profile details, notes, documents, memories, and related projects.
+- Independent projects remain available without a folder or client contact.
 
 ## Shipped foundation
 
@@ -15,16 +15,13 @@ Implemented in the current application codebase:
 - Signup-time workspace provisioning and workspace-scoped PostgreSQL RLS.
 - Dashboard with recent work, exact workspace-wide counts, and activity.
 - Client directory with create, search, edit, and delete.
-- 
-- 
-- 
-- Project folders for organizing projects by category, service, or campaign.
+- Company/client folders with profile details, shared notes, documents, Studio Memory, and linked projects.
 - Projects with create, search, filtering, status, due dates, client association, editing, and deletion.
 - Project records for briefs, notes, decisions, meetings, links, deliverables, and updates.
 - Tasks with project association, priority, due dates, editing, completion, reopening, and deletion.
 - Human-authored Studio Memory with categories, search, filters, editing, and optional project/client associations.
 - Workspace search and activity timeline.
-- Private project attachments with workspace/project authorization and retryable Storage cleanup.
+- Private project and folder attachments with workspace-scoped authorization and retryable Storage cleanup.
 - 
 - Responsive application shell and authentication screens.
 - GitHub Actions CI, npm lockfile, Dependabot, issue templates, and contribution guidance.
