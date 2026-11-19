@@ -379,3 +379,5 @@ body{font-family:"DM Sans",sans-serif;letter-spacing:-.01em}
 .folder-hero h2{font:700 19px Manrope,sans-serif;margin:5px 0}.folder-hero p{font-size:10px;color:#8b9388;margin:0}
 @media(max-width:1000px){.company-grid,.company-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:720px){.company-grid,.company-folder-grid,.company-context-columns{grid-template-columns:1fr}.company-overview{grid-template-columns:1fr}.company-overview-facts{align-items:flex-start;border-top:1px solid #efefe8;padding-top:13px}.company-section-heading{align-items:flex-start;flex-direction:column}.company-danger-zone{align-items:flex-start;flex-direction:column}.company-danger-zone .button{width:100%;justify-content:center}.company-form-row{grid-template-columns:1fr}}
+
+.company-profile-notes{font-size:10px!important;line-height:1.6;color:#798478!important;max-width:620px;margin:8px 0 0!important;white-space:pre-wrap}
