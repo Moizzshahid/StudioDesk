@@ -536,8 +536,8 @@ After functionality verified:
 
 ## 14. Final status
 
-StudioDesk is a real deployed Next.js + Supabase application with authentication, workspaces, clients, projects, tasks, project records, manual Studio Memory, activity, and private project attachments. It has undergone UI, functionality, and database hardening. Login redesign was explicitly approved by user. Project/record editing and project deletion/document cleanup were implemented. Storage RLS was tightened, exact queued deletion paths are required, SVG support restored, and dashboard counts corrected.
+StudioDesk is a deployed Next.js + Supabase application with authentication, workspaces, clients, projects, tasks, project records, human-authored Studio Memory, activity, and private project attachments. It has undergone UI, functionality, and database hardening. The login redesign was explicitly approved by the user. Project/record editing and project deletion/document cleanup were implemented. Storage RLS was tightened, exact queued deletion paths are required, SVG support was restored, and dashboard counts were corrected.
 
-It is **not yet independently audited or fully browser-verified for real clients**. The user is about to test actual workflows manually. Keep that distinction clear.
+The user reported successful manual browser testing of the application workflows on 2026-11-19. Treat this as maintainer-reported manual verification, not an independent security audit or an automated end-to-end regression suite. Automated authorization coverage, operational monitoring/backups, and remaining security hardening are still future work.
 
 Immediate priority: polish public repository documentation, establish the first tagged GitHub release, and then continue with the next product milestone. The user reports that manual browser testing passed; automated regression coverage, operational monitoring/backups, and remaining security hardening are still future work.
