@@ -25,7 +25,7 @@ Working rules:
 8. Never expose service-role credentials, tokens, .env.local, browser sessions, or real client files. Browser app uses public Supabase publishable/anon key only.
 9. User prefers short, direct Roman Urdu explanations, while code and technical documentation should be professional English.
 10. User explicitly chose to defer Supabase leaked-password protection because it may require a paid plan. Do not pressure them to upgrade or change billing.
-11. User wants to perform the final manual browser tests themselves. Provide checklist and troubleshoot their results; do not claim tests are complete.
+11. User reported that manual browser testing completed successfully on 2026-11-19. Treat this as maintainer-reported manual verification, not an independent audit or automated E2E suite.
 12. User wants an advanced, useful product and a minimal, premium, professional UI—not a generic beginner dashboard.
 
 ---
@@ -380,9 +380,9 @@ User feedback:
 
 Do not describe StudioDesk as fully production/client-ready until the following are tested or addressed.
 
-### Manual browser verification — user will do this
+### Manual browser verification — reported complete by user on 2026-11-19
 
-Use a test account and non-sensitive temporary project:
+The user reported that testing was completed successfully and everything worked. The following remains a useful regression checklist for future releases; do not describe it as an independent security audit:
 1. Open production login.
 2. Sign in.
 3. Confirm dashboard loads.
@@ -400,8 +400,8 @@ Use a test account and non-sensitive temporary project:
 15. If possible, simulate/retry cleanup after Storage failure without deleting real files.
 16. Sign out/in and confirm data persists.
 
-### Two-account tenant isolation
-Use two independent test accounts/workspaces:
+### Two-account tenant isolation — reported complete by user on 2026-11-19
+Use two independent test accounts/workspaces for future regression checks:
 - Account A must not see or change Account B clients/projects/tasks/memories/records/attachments.
 - Account B must not see or change Account A data.
 - Private Storage download/upload must be workspace/project scoped.
@@ -472,23 +472,14 @@ User asked to defer leaked-password protection, fix missing lockfile, and create
 11. No production DB change is needed for lockfile.
 12. Merge to main triggers the normal Vercel Git deployment; verify it after merge.
 
-### Exact next steps
-1. Refresh branch head for fix/npm-lockfile.
-2. Check latest GitHub Actions run on branch.
-3. Confirm CI used npm ci and both TypeScript and production build pass.
-4. If npm ci fails, inspect full job logs, fix lockfile/package metadata, regenerate with Node 22/npm 10, rerun.
-5. Inspect package-lock.json:
-   - lockfileVersion 3
-   - root dependencies match package.json
-   - no unexpected private URLs/secrets.
-6. Confirm generate-lockfile.yml is removed.
-7. Confirm deployment docs migration list and checklist formatting.
-8. Create PR to main describing lockfile v3, npm ci, docs correction.
-9. Merge only if CI passes and diff is focused.
-10. Verify main contains package-lock.json and CI uses npm ci.
-11. Verify Vercel deployment after merge and /login and /projects return HTTP 200.
-12. Do not claim authenticated workflows tested; user will test manually.
-13. Ensure this handoff file itself is committed to main as part of this PR.
+### Completion status
+1. PR #16 was merged into main on 2026-11-19.
+2. package-lock.json v3 is present and CI uses npm ci.
+3. The temporary lockfile generator workflow was removed.
+4. CI passed npm ci, TypeScript validation, and the Next.js production build.
+5. The production Vercel deployment for commit f413776e6c377b316d47b019f74c80dd2263de50 reached READY.
+6. The user subsequently reported successful manual browser testing.
+7. No application runtime code or production database data changed as part of the lockfile work.
 
 ---
 
@@ -549,4 +540,4 @@ StudioDesk is a real deployed Next.js + Supabase application with authentication
 
 It is **not yet independently audited or fully browser-verified for real clients**. The user is about to test actual workflows manually. Keep that distinction clear.
 
-Immediate priority: finish and merge npm lockfile branch after npm ci CI passes; then let user run real browser tests. Do not start a large feature build until user reports test results.
+Immediate priority: polish public repository documentation, establish the first tagged GitHub release, and then continue with the next product milestone. The user reports that manual browser testing passed; automated regression coverage, operational monitoring/backups, and remaining security hardening are still future work.
