@@ -85,13 +85,15 @@ export default function StudioMemory() {
       const [memoryResult, projectResult, clientResult] = await Promise.all([
         supabase
           .from("memories")
-          .select("id,title,content,category,project_id,client_id,created_at,updated_at")
+          .select("id,title,content,category,project_id,client_id,folder_id,created_at,updated_at")
           .eq("workspace_id", workspace)
+          .is("folder_id", null)
           .order("updated_at", { ascending: false }),
         supabase
           .from("projects")
           .select("id,name")
           .eq("workspace_id", workspace)
+          .is("folder_id", null)
           .order("name"),
         supabase
           .from("clients")

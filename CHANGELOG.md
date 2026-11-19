@@ -4,6 +4,9 @@ Notable user-facing changes to StudioDesk are documented here. Dates use YYYY-MM
 
 ## Unreleased
 
+- Company/client folders as complete workspaces for projects, shared notes, documents, and Studio Memory.
+- Projects can be assigned to a company folder or remain independent without a folder.
+
 ## [2.1.0] — 2026-11-19
 
 ### Added

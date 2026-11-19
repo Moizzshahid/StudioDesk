@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase";
 const links = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
+  { href: "/folders", label: "Folders", icon: FolderKanban },
   { href: "/tasks", label: "Tasks", icon: ListTodo },
   { href: "/clients", label: "Clients", icon: Users },
   { href: "/memory", label: "Studio Memory", icon: BrainCircuit },

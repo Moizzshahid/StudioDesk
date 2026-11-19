@@ -311,3 +311,7 @@ body{font-family:"DM Sans",sans-serif;letter-spacing:-.01em}
 .cleanup-inline>b{display:flex;align-items:center;gap:7px;color:#8b6545;font-size:10px}
 .cleanup-inline>div{padding:7px 0 0}
 @media(max-width:600px){.cleanup-job,.cleanup-inline>div{align-items:flex-start;flex-direction:column}.cleanup-job .button,.cleanup-inline .button{width:100%;justify-content:center}}
+
+
+/* Workspace-wide project folder categories */
+.company-folder-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.company-folder-card .project-actions{display:flex;gap:7px}.company-folder-card .project-actions .button{padding:7px 9px;font-size:10px}.folder-hero{display:flex;align-items:center;gap:17px;padding:24px;border:1px solid #e7e8df;border-radius:11px;background:#f5f7f1;margin-bottom:25px}.folder-hero>span{width:48px;height:48px;display:grid;place-items:center;border-radius:11px;background:#fffefa;color:#607a66}.folder-hero h2{font:700 19px Manrope,sans-serif;margin:5px 0}.folder-hero p{font-size:10px;color:#8b9388;margin:0}@media(max-width:1000px){.company-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:720px){.company-folder-grid{grid-template-columns:1fr}}
