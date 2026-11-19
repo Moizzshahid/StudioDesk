@@ -4,10 +4,8 @@ Notable user-facing changes to StudioDesk are documented here. Dates use YYYY-MM
 
 ## Unreleased
 
-- Company profiles for ongoing client relationships and recurring-work folders.
-- Company- and folder-level notes, records, and private documents.
-- Projects can be independent, company-level, or organized inside a company folder.
-- Refined editorial interface for company and folder workspaces.
+- Workspace-wide project folders for organizing work by category, service, or campaign.
+- Projects can be assigned to a folder, moved between folders, or left unfiled.
 
 ## [2.1.0] — 2026-11-19
 
