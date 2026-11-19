@@ -4,9 +4,15 @@
 The `main` branch is the only development line currently maintained. No stable production release has been declared.
 
 ## Reporting a vulnerability
-Please do not publish exploitable vulnerability details in a public issue. Contact the repository owner through the private contact options on the [GitHub profile](https://github.com/Moizzshahid) and include a concise description, potential impact, affected routes or tables, and reproduction steps using test accounts and synthetic data.
 
-Please allow time for investigation before public disclosure. Do not access, modify, or retain data that does not belong to you while researching a suspected issue.
+Please do not publish exploitable vulnerability details in a public issue or discussion. Contact the repository owner privately through the contact options on the [GitHub profile](https://github.com/Moizzshahid). Include:
+
+- A concise description and potential impact.
+- Affected routes, components, tables, or policies, if known.
+- Reproduction steps using only your own test account and synthetic data.
+- Any suggested mitigation.
+
+Do not include passwords, access tokens, service-role keys, private client files, or other secrets in a report. Do not access, modify, download, or retain data that does not belong to you. Please allow the maintainer reasonable time to investigate and coordinate a fix before public disclosure. This is a maintainer-operated project; response times are not guaranteed.
 
 ## Deployment security notes
 - Keep Row Level Security enabled on tenant-owned tables.
