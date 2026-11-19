@@ -5,7 +5,8 @@ Last updated: 2026-11-19 (Asia/Karachi)
 Purpose: This is the continuity document for the next ChatGPT conversation. Read it before changing code, database schema, or deployment settings. It records the product, technical architecture, infrastructure, development history, migrations, completed work, known risks, and next steps.
 
 Repository: https://github.com/Moizzshahid/studioDesk
-Production: https://studiodesk-azonix.vercel.app
+Production: https://studiodesk-delta.vercel.app
+Latest production commit (2026-11-19): `01c2237e05d41f2085c31702df21ad9044361ef8`
 Owner / studio: Moiz / Azonix
 
 ---
