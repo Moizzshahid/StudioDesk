@@ -149,4 +149,4 @@ with check (bucket_id = 'studiodesk-files' and (
       and c.id::text = (storage.foldername(storage.objects.name))[2]
       and (storage.foldername(storage.objects.name))[3] = 'company')
 ));
--- Migration 0009's exact-cleanup-queue delete policy remains unchanged.
+-- Migration 0009's exact-cleanup-queue delete policy remains intentionally unchanged.
