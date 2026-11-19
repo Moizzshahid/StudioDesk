@@ -46,6 +46,8 @@ Use a test account and non-sensitive sample data:
 
 ## 4. Production readiness
 
-CI verifies TypeScript and the Next.js production build; this does not prove authenticated workflows. Before real client data is stored, complete every smoke test above with two independent accounts, verify cross-workspace reads/writes are denied, confirm private file access, configure backups/monitoring and review all Security Advisor findings. Leaked-password protection is a known deferred item for this deployment; enable it when the available plan supports it. Treat the app as pre-production until those checks pass.
+CI verifies TypeScript and the Next.js production build; it does not prove authenticated workflows. The maintainer reports that the documented manual browser workflows and workspace-isolation checks passed on the deployed application on 2026-11-19. Re-run these checks for each deployment that changes authentication, authorization, database schema, or Storage behavior.
+
+Before handling real client data in a self-hosted instance, configure backups and monitoring, review all Supabase Security Advisor findings, and confirm private file access and cleanup behavior. Leaked-password protection is a known deferred item for the maintainer's deployment; enable it when the available plan supports it. Manual testing is not an independent security audit.
 
 Never commit `.env.local`, real client data, access tokens, or service-role credentials.
