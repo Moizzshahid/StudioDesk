@@ -366,3 +366,61 @@ body{font-family:"DM Sans",sans-serif;letter-spacing:-.01em}
 @media(max-width:390px){
   .sidebar nav{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+
+/* StudioDesk brand, navigation and icon palette refinements */
+.logo svg,.auth-brand-mark svg{display:block;width:22px;height:22px}
+.empty svg{color:#809482}
+.client blockquote{border-left-color:#b9c9bb}
+.memoryintro{border-color:#e2e9e2;background:#f1f4ef}
+.memoryintro>svg{color:#49685d}
+.memoryintro p{color:#778278}
+.memoryintro>span{color:#49685d}
+.record-meta{color:#92998f}
+.record-meta span{color:#49685d}
+.record-edit{color:#87978a}
+.record-edit:hover{color:#49685d}
+.project-task-row .taskstatus{flex:none;min-width:100px}
+.project-task-description{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+
+/* Seven workspace destinations share one full-width mobile navigation row. */
+@media(max-width:720px){
+  .sidebar{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:11px 10px 8px;
+  }
+  .brand{padding:0 4px 9px}
+  .sidebar nav{
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:2px;
+    width:100%;
+    min-width:0;
+    overflow:visible;
+  }
+  .navlink{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    width:100%;
+    min-width:0;
+    min-height:51px;
+    box-sizing:border-box;
+    padding:6px 1px;
+    border-radius:8px;
+    font-size:clamp(7px,1.85vw,9px);
+    line-height:1.12;
+    text-align:center;
+    white-space:normal;
+  }
+  .navlink svg{flex:none;width:17px;height:17px}
+}
+@media(max-width:360px){
+  .sidebar{padding-left:6px;padding-right:6px}
+  .navlink{font-size:7px;min-height:48px}
+  .navlink svg{width:16px;height:16px}
+}
