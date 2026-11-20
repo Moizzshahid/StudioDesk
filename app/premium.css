@@ -366,3 +366,51 @@ body{font-family:"DM Sans",sans-serif;letter-spacing:-.01em}
 @media(max-width:390px){
   .sidebar nav{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+
+/* Full-width mobile workspace header: brand first, all seven destinations in one row. */
+@media(max-width:720px){
+  .sidebar{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    min-width:0;
+    height:auto;
+    padding:13px 15px 10px;
+    box-sizing:border-box;
+  }
+  .sidebar .brand{width:max-content;max-width:100%;padding:0 4px 12px}
+  .sidebar nav{
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    width:100%;
+    min-width:0;
+    gap:3px;
+    overflow:visible;
+  }
+  .sidebar .navlink{
+    min-width:0;
+    min-height:52px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:4px;
+    padding:6px 1px;
+    border-radius:7px;
+    font-size:9px;
+    line-height:1.15;
+    text-align:center;
+    white-space:normal;
+    overflow-wrap:anywhere;
+  }
+  .sidebar .navlink svg{width:16px;height:16px;flex:none}
+}
+@media(max-width:390px){
+  .sidebar{padding-left:10px;padding-right:10px}
+  .sidebar .navlink{font-size:8px;min-height:49px}
+}
+.logo svg,.auth-brand-mark svg{width:20px;height:20px;display:block}
+.auth-brand-mark svg{width:19px;height:19px}
+.record-edit{color:#829486}
