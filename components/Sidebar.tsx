@@ -6,6 +6,7 @@ import {
   Activity, BrainCircuit, FolderKanban, LayoutDashboard, LogOut, ListTodo, Users,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import StudioMark from "@/components/StudioMark";
 
 const links = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -29,7 +30,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <Link className="brand" href="/dashboard">
-        <span className="logo">S</span>
+        <StudioMark className="logo" />
         <span>StudioDesk</span>
       </Link>
       <small className="navlabel">YOUR STUDIO</small>
