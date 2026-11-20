@@ -7,7 +7,6 @@ import {
   Mail, ShieldCheck, Sparkles,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
-import StudioMark from "@/components/StudioMark";
 
 export default function Login() {
   const router = useRouter();
@@ -67,7 +66,7 @@ export default function Login() {
   return (
     <main className="auth auth-premium">
       <section className="auth-story">
-        <div className="auth-brand"><StudioMark className="auth-brand-mark" /><span>StudioDesk</span><small>CREATIVE OPERATIONS</small></div>
+        <div className="auth-brand"><span className="auth-brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h5.5v5.5H5zM13.5 5.5H19v5.5h-5.5zM5 13h5.5v5.5H5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 13h2.8a2.7 2.7 0 0 1 2.7 2.7v2.8h-5.5z" fill="currentColor" opacity=".9"/></svg></span><span>StudioDesk</span><small>CREATIVE OPERATIONS</small></div>
         <div className="auth-story-content">
           <div className="auth-eyebrow"><span/> A MORE CONSIDERED WAY TO WORK</div>
           <h1>Make space for<br/><em>the work</em> that<br/>moves you forward.</h1>
@@ -81,7 +80,7 @@ export default function Login() {
         <div className="auth-orb auth-orb-one"/><div className="auth-orb auth-orb-two"/>
       </section>
       <section className="auth-panel">
-        <div className="auth-mobile-brand"><StudioMark className="auth-brand-mark" /> StudioDesk</div>
+        <div className="auth-mobile-brand"><span className="auth-brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h5.5v5.5H5zM13.5 5.5H19v5.5h-5.5zM5 13h5.5v5.5H5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 13h2.8a2.7 2.7 0 0 1 2.7 2.7v2.8h-5.5z" fill="currentColor" opacity=".9"/></svg></span> StudioDesk</div>
         <div className="auth-box">
           <div className="auth-symbol"><Layers3 size={20}/></div>
           <div className="auth-kicker">{mode === "login" ? "WELCOME BACK" : "YOUR NEXT CHAPTER"}</div>
