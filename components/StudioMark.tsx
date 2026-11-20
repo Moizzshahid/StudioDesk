@@ -1,5 +1,3 @@
-import type { CSSProperties } from "react";
-
 export default function StudioMark({ className = "logo" }: { className?: string }) {
   return (
     <span className={className} aria-hidden="true">
