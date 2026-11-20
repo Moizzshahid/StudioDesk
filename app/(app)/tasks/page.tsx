@@ -1,19 +1,17 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, X, ListTodo, CheckCircle2, Pencil, CalendarDays, Clock3 } from "lucide-react";
+import { Plus, Search, X, ListTodo, CheckCircle2, Pencil } from "lucide-react";
 import Header from "@/components/Header";
 import { supabase } from "@/lib/supabase";
 import { getWorkspaceId } from "@/lib/workspace";
 import { recordActivity } from "@/lib/activity";
 
 type Task={id:string;title:string;description:string|null;status:string;priority:string;due_date:string|null;project_id:string|null;created_at:string};
-type Project={id:string;name:string};
 const taskStatuses=["todo","in_progress","done"];
 const priorities=["low","medium","high","urgent"];
 
 export default function Tasks() {
  const [rows,setRows]=useState<Task[]>([]);
- const [projects,setProjects]=useState<Project[]>([]);
  const [query,setQuery]=useState("");
  const [filter,setFilter]=useState("all");
  const [show,setShow]=useState(false);
@@ -21,20 +19,15 @@ export default function Tasks() {
  const [title,setTitle]=useState("");
  const [description,setDescription]=useState("");
  const [priority,setPriority]=useState("medium");
- const [projectId,setProjectId]=useState("");
  const [dueDate,setDueDate]=useState("");
  const [error,setError]=useState("");
  const [busy,setBusy]=useState(false);
  async function load() {
   try {
    const workspace=await getWorkspaceId();
-   const [t,p]=await Promise.all([
-    supabase.from("tasks").select("id,title,description,status,priority,due_date,project_id,created_at").eq("workspace_id",workspace).order("created_at",{ascending:false}),
-    supabase.from("projects").select("id,name").eq("workspace_id",workspace).order("name")
-   ]);
-   if(t.error) throw t.error;
-   if(p.error) throw p.error;
-   setRows((t.data||[]) as Task[]);setProjects((p.data||[]) as Project[]);
+   const {data,error:taskError}=await supabase.from("tasks").select("id,title,description,status,priority,due_date,project_id,created_at").eq("workspace_id",workspace).is("project_id",null).order("created_at",{ascending:false});
+   if(taskError) throw taskError;
+   setRows((data||[]) as Task[]);
   } catch(e) {setError(e instanceof Error?e.message:"Could not load tasks.");}
  }
  useEffect(()=>{void load();},[]);
@@ -43,7 +36,7 @@ export default function Tasks() {
   try {
    const workspace=await getWorkspaceId();
    const {data:auth}=await supabase.auth.getUser();
-   const payload={title:title.trim(),description:description.trim()||null,priority,project_id:projectId||null,due_date:dueDate||null};
+   const payload={title:title.trim(),description:description.trim()||null,priority,project_id:null,due_date:dueDate||null};
    if(editingTask){
     const {error:err}=await supabase.from("tasks").update(payload).eq("id",editingTask.id).eq("workspace_id",workspace);
     if(err)throw err;
@@ -53,7 +46,7 @@ export default function Tasks() {
     if(err)throw err;
     if(created)void recordActivity("task_created","task",created.id,"Created task: "+title.trim());
    }
-   setTitle("");setDescription("");setPriority("medium");setProjectId("");setDueDate("");setEditingTask(null);setShow(false);await load();
+   setTitle("");setDescription("");setPriority("medium");setDueDate("");setEditingTask(null);setShow(false);await load();
   } catch(e) {setError(e instanceof Error?e.message:"Could not save task.");}
   finally {setBusy(false);}
  }
@@ -81,15 +74,14 @@ export default function Tasks() {
   } catch(e) {setError(e instanceof Error?e.message:"Could not delete task.");}
  }
  const filtered=useMemo(()=>rows.filter(t=>(filter==="all"||t.status===filter)&&(t.title+" "+(t.description||"")).toLowerCase().includes(query.toLowerCase())),[rows,filter,query]);
- const projectName=(id:string|null)=>projects.find(p=>p.id===id)?.name||"General";
  return <div className="page">
-  <Header tag="SMALL STEPS, REAL MOMENTUM" title="Tasks" desc="Turn the next action into progress. Keep priorities visible." action={<button className="button" onClick={()=>setShow(true)}><Plus size={16}/> Add task</button>}/>
+  <Header tag="SMALL STEPS, REAL MOMENTUM" title="Tasks" desc="Your studio-wide next steps. Project tasks stay inside their project workspaces." action={<button className="button" onClick={()=>setShow(true)}><Plus size={16}/> Add task</button>}/>
   {error&&<div className="notice">{error}</div>}
   <div className="toolbar"><Search size={16}/><input placeholder="Search tasks…" value={query} onChange={e=>setQuery(e.target.value)}/><select value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">All tasks</option>{taskStatuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select></div>
   <section className="panel taskpanel"><div className="panelhead"><div><h3>Work queue</h3><p>{filtered.length} tasks shown · {rows.filter(t=>t.status!=="done").length} still open</p></div></div>
-   {filtered.map(t=><article className="taskrow" key={t.id}><button className={t.status==="done"?"taskcheck checked":"taskcheck"} onClick={()=>updateStatus(t.id,t.status==="done"?"todo":"done")} aria-label={t.status==="done"?"Reopen task":"Complete task"}><CheckCircle2 size={19}/></button><div className="taskbody"><b className={t.status==="done"?"taskdone":""}>{t.title}</b><small>{projectName(t.project_id)}{t.due_date?" · Due "+new Date(t.due_date+"T00:00:00").toLocaleDateString():""}</small>{t.description&&<p>{t.description}</p>}</div><span className={"priority "+t.priority}>{t.priority}</span><button className="task-edit-button" onClick={()=>{setEditingTask(t);setTitle(t.title);setDescription(t.description||"");setPriority(t.priority);setProjectId(t.project_id||"");setDueDate(t.due_date||"");setShow(true)}} aria-label={"Edit "+t.title} title="Edit task"><Pencil size={14}/></button><select className="taskstatus" value={t.status} onChange={e=>updateStatus(t.id,e.target.value)} aria-label="Task status">{taskStatuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select><button className="deleteTask" onClick={()=>remove(t.id)} aria-label="Delete task">×</button></article>)}
+   {filtered.map(t=><article className="taskrow" key={t.id}><button className={t.status==="done"?"taskcheck checked":"taskcheck"} onClick={()=>updateStatus(t.id,t.status==="done"?"todo":"done")} aria-label={t.status==="done"?"Reopen task":"Complete task"}><CheckCircle2 size={19}/></button><div className="taskbody"><b className={t.status==="done"?"taskdone":""}>{t.title}</b><small>General task{t.due_date?" · Due "+new Date(t.due_date+"T00:00:00").toLocaleDateString():""}</small>{t.description&&<p>{t.description}</p>}</div><span className={"priority "+t.priority}>{t.priority}</span><button className="task-edit-button" onClick={()=>{setEditingTask(t);setTitle(t.title);setDescription(t.description||"");setPriority(t.priority);setDueDate(t.due_date||"");setShow(true)}} aria-label={"Edit "+t.title} title="Edit task"><Pencil size={14}/></button><select className="taskstatus" value={t.status} onChange={e=>updateStatus(t.id,e.target.value)} aria-label="Task status">{taskStatuses.map(s=><option key={s} value={s}>{s.replace("_"," ")}</option>)}</select><button className="deleteTask" onClick={()=>remove(t.id)} aria-label="Delete task">×</button></article>)}
    {!filtered.length&&<div className="empty"><ListTodo/><b>{rows.length?"No tasks match this view.":"A clear next step changes everything."}</b><p>{rows.length?"Try a different filter or search.":"Add your first task to create momentum."}</p><button className="button" onClick={()=>setShow(true)}><Plus size={15}/> Add task</button></div>}
   </section>
-  {show&&<div className="overlay"><div className="modal"><div className="modalhead"><h2>{editingTask?"Edit task":"Add a task"}</h2><button onClick={()=>{setShow(false);setEditingTask(null)}} aria-label="Close"><X/></button></div><form onSubmit={add}><label>Task title<input required maxLength={140} value={title} onChange={e=>setTitle(e.target.value)} placeholder="What needs to happen next?"/></label><label>Details<textarea rows={3} value={description} onChange={e=>setDescription(e.target.value)}/></label><label>Project<select value={projectId} onChange={e=>setProjectId(e.target.value)}><option value="">General / unassigned</option>{projects.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}</select></label><label>Priority<select value={priority} onChange={e=>setPriority(e.target.value)}>{priorities.map(p=><option key={p} value={p}>{p}</option>)}</select></label><label>Due date<input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label><button className="button" disabled={busy}>{busy?"Saving…":editingTask?"Save changes":"Save task"}</button></form></div></div>}
+  {show&&<div className="overlay"><div className="modal"><div className="modalhead"><h2>{editingTask?"Edit task":"Add a task"}</h2><button onClick={()=>{setShow(false);setEditingTask(null)}} aria-label="Close"><X/></button></div><form onSubmit={add}><label>Task title<input required maxLength={140} value={title} onChange={e=>setTitle(e.target.value)} placeholder="What needs to happen next?"/></label><label>Details<textarea rows={3} value={description} onChange={e=>setDescription(e.target.value)}/></label><p className="privacy">Tasks created here stay in your studio-wide Tasks list. To keep a task inside a project, add it from that project workspace.</p><label>Priority<select value={priority} onChange={e=>setPriority(e.target.value)}>{priorities.map(p=><option key={p} value={p}>{p}</option>)}</select></label><label>Due date<input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label><button className="button" disabled={busy}>{busy?"Saving…":editingTask?"Save changes":"Save task"}</button></form></div></div>}
  </div>;
 }
