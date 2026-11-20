@@ -28,9 +28,9 @@ export default function Dashboard() {
       const workspace = await getWorkspaceId();
       const [p, t, activeProjects, openTasks, c, m, a] = await Promise.all([
         supabase.from("projects").select("id,name,status,description,due_date").eq("workspace_id", workspace).order("created_at", { ascending: false }).limit(5),
-        supabase.from("tasks").select("id,title,status,due_date,priority").eq("workspace_id", workspace).neq("status", "done").order("due_date", { ascending: true, nullsFirst: false }).limit(6),
+        supabase.from("tasks").select("id,title,status,due_date,priority").eq("workspace_id", workspace).is("project_id", null).neq("status", "done").order("due_date", { ascending: true, nullsFirst: false }).limit(6),
         supabase.from("projects").select("id", { count: "exact", head: true }).eq("workspace_id", workspace).neq("status", "completed"),
-        supabase.from("tasks").select("id", { count: "exact", head: true }).eq("workspace_id", workspace).neq("status", "done"),
+        supabase.from("tasks").select("id", { count: "exact", head: true }).eq("workspace_id", workspace).is("project_id", null).neq("status", "done"),
         supabase.from("clients").select("id", { count: "exact", head: true }).eq("workspace_id", workspace),
         supabase.from("memories").select("id", { count: "exact", head: true }).eq("workspace_id", workspace),
         supabase.from("activity_events").select("id,summary,entity_type,created_at").eq("workspace_id", workspace).order("created_at", { ascending: false }).limit(5),
