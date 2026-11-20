@@ -2,10 +2,26 @@ export default function StudioMark({ className = "logo" }: { className?: string 
   return (
     <span className={className} aria-hidden="true">
       <svg viewBox="0 0 36 36" fill="none" role="presentation">
-        <path d="M10 8.5h11.8L27 13.7v14.1H10V8.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
-        <path d="M21.5 8.8v5.1h5.1" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
-        <path d="M14 18.1h9M14 22h6.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-        <path d="M23.5 25.2h5" stroke="#B8CDBD" strokeWidth="2.2" strokeLinecap="round"/>
+        <path
+          d="M18 5.5 28.5 11.7v12.6L18 30.5 7.5 24.3V11.7L18 5.5Z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <path
+          d="m7.8 11.9 10.2 6 10.2-6M18 18v12"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="m13.1 8.4 4.9 2.9 4.9-2.9"
+          stroke="#B8CDBD"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </span>
   );
