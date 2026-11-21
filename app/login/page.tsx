@@ -11,8 +11,12 @@ import StudioMark from "@/components/StudioMark";
 
 const SIGNUP_EMAIL_COOLDOWN_SECONDS = 60;
 
+const STUDIODESK_PRODUCTION_URL = "https://studiodesk-azonix.vercel.app";
+
 function getEmailConfirmationRedirect() {
-  return `${window.location.origin}/email-confirmed`;
+  // Always complete signup on the public StudioDesk site, even when signup
+  // was initiated from a local development browser.
+  return `${STUDIODESK_PRODUCTION_URL}/email-confirmed`;
 }
 
 function getRateLimitSeconds(error: unknown): number | null {
