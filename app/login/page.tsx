@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowRight, ArrowUpRight, Eye, EyeOff, Layers3, LockKeyhole,
-  Mail, ShieldCheck, Sparkles,
+  ArrowRight, ArrowUpRight, Chrome, Eye, EyeOff, Layers3, LockKeyhole,
+  Mail, ShieldCheck,
 } from "lucide-react";
 import { supabase, supabaseConfigured } from "@/lib/supabase";
 import StudioMark from "@/components/StudioMark";
@@ -121,6 +121,22 @@ export default function Login() {
     } finally { setBusy(false); }
   }
 
+  async function signInWithGoogle() {
+    setBusy(true);
+    setMessage("");
+    try {
+      if (!supabaseConfigured) throw new Error("Connect Supabase first. See README.md.");
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      if (error) throw error;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Google sign-in could not be started.");
+      setBusy(false);
+    }
+  }
+
   async function sendReset() {
     setBusy(true); setMessage("");
     try {
@@ -184,6 +200,10 @@ export default function Login() {
                 {mode==="login"&&<div className="auth-forgot"><button type="button" onClick={()=>void sendReset()} disabled={busy||resetSent}>{resetSent?"Reset email requested":"Forgot password?"}</button></div>}
                 <button className="auth-submit" disabled={busy}>{busy?"Please wait…":mode==="login"?"Sign in to your workspace":"Create workspace"}<ArrowRight size={16}/></button>
               </form>
+              <div className="auth-or-divider"><span>OR CONTINUE WITH</span></div>
+              <button className="auth-google" type="button" onClick={() => void signInWithGoogle()} disabled={busy}>
+                <Chrome size={16}/><span>Continue with Google</span><ArrowUpRight size={14}/>
+              </button>
               {message&&<div className="auth-message" role="status" aria-live="polite">{message}</div>}
               <div className="auth-switch"><span>{mode==="login"?"New to StudioDesk?":"Already have a workspace?"}</span><button type="button" onClick={()=>{setMessage("");setMode(mode==="login"?"signup":"login")}}>{mode==="login"?"Create an account":"Sign in"} <ArrowUpRight size={13}/></button></div>
             </>
